@@ -10,6 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R Markdown
 
 This document includes script to add a new variable to the EMA data output. This script adds 'Day of Week' to the table. 
+```{r}
+library(tibble)
+library(dplyr)
+library(data.table)
+
+```
+
 
 First, read EMA data and select for variables of interest:
 ```{r}
@@ -33,6 +40,27 @@ If    DayofWeek = Monday, then Class_DayofWeek = Weekday
       DayofWeek = Friday, then Class_DayofWeek = Weekday
       DayofWeek = Saturday, then Class_DayofWeek = Weekend
       DayofWeek = Sunday, then Class_DayofWeek = Weekend
+```{r}
+  Monday <- "Monday"
+  Tuesday <- "Tuesday"
+  Wednesday <- "Wednesday"
+  Thursday <- "Thursday"
+  Friday <- "Friday"
+  Saturday <- "Saturday"
+  Sunday <- "Sunday"
+  
+attach(EMA)
+  Cat_DayofWeek[DayofWeek==Monday] <- "Weekday"
+  Cat_DayofWeek [DayofWeek==Tuesday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Wednesday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Thursday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Friday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Saturday]<-"Weekend"
+  Cat_DayofWeek [DayofWeek==Sunday]<-"Weekend"
+
+EMA <- EMA %>%
+  mutate(Cat_DayofWeek=Cat_DayofWeek, .after=DayofWeek)
+```
       
   
 

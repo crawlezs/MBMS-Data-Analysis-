@@ -43,8 +43,8 @@ attach(EMA_v2)
   Cat_DayofWeek [DayofWeek==Saturday]<-"Weekend"
   Cat_DayofWeek [DayofWeek==Sunday]<-"Weekend"
 
-EMA_v2 %>%
-  EMA_v2 <- mutate(Cat_DayofWeek, .after=DayofWeek)
+EMA_v2 <- EMA_v2 %>%
+  mutate(Cat_DayofWeek=Cat_DayofWeek, .after=DayofWeek)
   
  
 
