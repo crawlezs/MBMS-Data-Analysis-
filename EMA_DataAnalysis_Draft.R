@@ -23,5 +23,32 @@ EMA_v2 <- EMA %>%
   mutate(DayofWeek = weekdays(as.Date(`Survey Timestamp`)), .after= `Survey Timestamp`)
 
 
+#Add variable to classify "Weekday" or "Weekend"#
+
+EMA_v2%>%
+  Monday <- "Monday"
+  Tuesday <- "Tuesday"
+  Wednesday <- "Wednesday"
+  Thursday <- "Thursday"
+  Friday <- "Friday"
+  Saturday <- "Saturday"
+  Sunday <- "Sunday"
+  
+attach(EMA_v2)
+  Cat_DayofWeek[DayofWeek==Monday] <- "Weekday"
+  Cat_DayofWeek [DayofWeek==Tuesday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Wednesday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Thursday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Friday]<-"Weekday"
+  Cat_DayofWeek [DayofWeek==Saturday]<-"Weekend"
+  Cat_DayofWeek [DayofWeek==Sunday]<-"Weekend"
+
+EMA_v2 %>%
+  EMA_v2 <- mutate(Cat_DayofWeek, .after=DayofWeek)
+  
+ 
+
+
+
 
 
