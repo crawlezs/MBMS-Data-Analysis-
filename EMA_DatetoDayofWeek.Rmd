@@ -1,0 +1,38 @@
+---
+title: "EMA_DatetoDayofWeek"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This document includes script to add a new variable to the EMA data output. This script adds 'Day of Week' to the table. 
+
+First, read EMA data and select for variables of interest:
+```{r}
+EMA<- as_tibble(MBMS_EMA_20210622)
+EMA <- EMA%>%
+  select(`Record ID`,`Event Name`,`Repeat Instance`, `Survey Timestamp`, Distressed, Excited, Upset, Scared, Enthusiastic, Alert, Inspired, Nervous, Determined, Afraid)
+```
+
+Then, add 'DayofWeek' variable. THis will classify the weekday from the Survey Timestamp data.
+```{r}
+EMA <- EMA %>%
+  mutate(DayofWeek = weekdays(as.Date(`Survey Timestamp`)), .after= `Survey Timestamp`)
+
+```
+
+Additional variable to classify Weekend and Weekday.
+If    DayofWeek = Monday, then Class_DayofWeek = Weekday
+      DayofWeek = Tuesday, then Class_DayofWeek = Weekday
+      DayofWeek = Wednesday, then Class_DayofWeek = Weekday
+      DayofWeek = Thursday, then Class_DayofWeek = Weekday
+      DayofWeek = Friday, then Class_DayofWeek = Weekday
+      DayofWeek = Saturday, then Class_DayofWeek = Weekend
+      DayofWeek = Sunday, then Class_DayofWeek = Weekend
+      
+  
+
