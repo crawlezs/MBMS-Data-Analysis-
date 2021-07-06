@@ -79,3 +79,14 @@ head(by_id_PANASPos)
 #descriptive statistics3
 summary(PreOnlyData_Filter)
 
+
+
+PANAS_Pos_mixed =lmer(PANAS_Start_Pos ~ Session + (1|Record_ID), data=PreOnlyData_An1)
+
+summary(PANAS_Pos_mixed)
+
+PANAS_Pos_lm=lm(PANAS_Start_Pos ~ Session, data=PreOnlyData_An1)
+summary(PANAS_Pos_lm)
+
+PANAS_Neg_mixed =lmer(PANAS_Start_Neg ~ Session + (1|Record_ID), data=PreOnlyData_An1)
+summary(PANAS_Neg_mixed)

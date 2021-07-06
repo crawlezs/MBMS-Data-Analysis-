@@ -39,7 +39,12 @@ as_tibble(PreOnlyData_An1)
 Analysis 1 will begin with descriptive statistics of the three variables: PANAS_Start_Pos, PANAS_Start_Neg, IOS_Pre
 ```{r}
 PreOnlyData_An1 %>%
-  ##add descriptives##
+  sapply (mean,na.rm=TRUE)
+PreOnlyData_An1 %>%
+  sapply (sd,na.rm=TRUE) 
+PreOnlyData_An1 %>%
+  sapply (range, na.rm=TRUE)
+
 ```
 
 Beginning with PANAS_Start_Pos. The data is nested by timepoint 1,2,3,4,5,6,7. First, plot PANAS_Start_Pos by timepoint(Session). 
