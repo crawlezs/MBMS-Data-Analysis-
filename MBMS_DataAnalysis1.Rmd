@@ -39,9 +39,10 @@ as_tibble(PreOnlyData_An1)
 Analysis 1 will begin with descriptive statistics of the three variables: PANAS_Start_Pos, PANAS_Start_Neg, IOS_Pre
 ```{r}
 PreOnlyData_An1 %>%
+  ##add descriptives##
 ```
 
-Beginning with PANAS_Start_Pos. The data is nested by timepoint 1,2,3,4,5,6,7. First, plot PANAS_Start_Pos by timepoint. 
+Beginning with PANAS_Start_Pos. The data is nested by timepoint 1,2,3,4,5,6,7. First, plot PANAS_Start_Pos by timepoint(Session). 
 ```{r}
 PANAS_Pos_lm=lm(PANAS_Start_Pos ~ Session, data=PreOnlyData_An1)
 summary(PANAS_Pos_lm)
@@ -50,6 +51,8 @@ summary(PANAS_Pos_lm)
 ## Residual standard error =8.898, df(80)
 ## R2= 0.0024, Adjusted R2= -0.010
 ## F(1,80)=0.1954, p=0.6597, P>.05
+
+Add analysis of group effects by individuals (Record_ID)
 ```{r}
 PANAS_Pos_mixed =lmer(PANAS_Start_Pos ~ Session + (1|Record_ID), data=PreOnlyData_An1)
 
@@ -58,6 +61,38 @@ summary(PANAS_Pos_mixed)
 confint(PANAS_Pos_mixed)
 ```
 
+Now run the models with PANAS_Start_Neg.
+```{r}
+PANAS_Neg_lm=lm(PANAS_Start_Neg ~ Session, data=PreOnlyData_An1)
+summary(PANAS_Neg_lm)
+```
+## Output shows the following
+## Residual standard error =4.471, df(80)
+## R2= 0.118, Adjusted R2= 0.1069
+## F(1,80)=10.7, p=0.001583, P<.05
+
+Add analysis of group effects by individuals (Record_ID)
+```{r}
+PANAS_Neg_mixed=lmer(PANAS_Start_Neg ~ Session + (1|Record_ID), data=PreOnlyData_An1)
+summary(PANAS_Neg_mixed)
+confint(PANAS_Neg_mixed)
+```
+
+Now run the models with IOS_Pre.
+```{r}
+IOS_lm=lm(IOS_Pre ~ Session, data=PreOnlyData_An1)
+summary(IOS_lm)
+```
+## Output shows the following
+## Residual standard error =1.726, df(80)
+## R2= 0.2795, Adjusted R2= 0.2705
+## F(1,80)=31.03, p=0.00, P<.05
+Add analysis of group effects by individuals (Record_ID)
+```{r}
+IOS_mixed=lmer(IOS_Pre ~ Session + (1|Record_ID), data=PreOnlyData_An1)
+summary(IOS_mixed)
+confint(IOS_mixed)
+```
 
 
 ```{r}
