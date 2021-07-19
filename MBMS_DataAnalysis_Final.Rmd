@@ -1,0 +1,62 @@
+---
+title: "MBMS_DataAnalysis_Final"
+output: html_document
+---
+Open necessary packages
+```{r}
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+```
+
+Load Dataset: PANAS_Positive_Start
+```{r}
+library(readxl)
+PANAS_Positive_Start <- read_excel("~/Desktop/MBMS Data/PANAS_Positive_Start.xlsx")
+View(PANAS_Positive_Start)
+```
+Load Dataset: PANAS_Negative_Start
+```{r}
+library(readxl)
+PANAS_Negative_Start <- read_excel("~/Desktop/MBMS Data/PANAS_Negative_Start.xlsx")
+View(PANAS_Negative_Start)
+```
+Load Dataset: IOS_Pre
+```{r}
+library(readxl)
+IOS_Pre <- read_excel("~/Desktop/MBMS Data/IOS_Pre.xlsx")
+View(IOS_Pre)
+```
+
+Remove any missing data from the data set. 
+```{r}
+PANAS_Positive_Start <- PANAS_Positive_Start%>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+
+PANAS_Negative_Start <- PANAS_Negative_Start%>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+
+IOS_Pre <- IOS_Pre%>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+```
+
