@@ -1,0 +1,208 @@
+---
+title: "MBMS_DataAnalysis_Final"
+output: html_document
+---
+Open necessary packages
+```{r}
+library(tidyverse)
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+library(ggpubr)
+library(rstatix)
+library(datarium)
+
+```
+
+Load Dataset: PANAS_Positive_Start
+```{r}
+library(readxl)
+PANAS_Positive_Start <- read_excel("~/Desktop/MBMS Data/PANAS_Positive_Start.xlsx")
+View(PANAS_Positive_Start)
+```
+Load Dataset: PANAS_Negative_Start
+```{r}
+library(readxl)
+PANAS_Negative_Start <- read_excel("~/Desktop/MBMS Data/PANAS_Negative_Start.xlsx")
+View(PANAS_Negative_Start)
+```
+Load Dataset: IOS_Pre
+```{r}
+library(readxl)
+IOS_Pre <- read_excel("~/Desktop/MBMS Data/IOS_Pre.xlsx")
+View(IOS_Pre)
+```
+
+Remove any missing data from the data set. 
+```{r}
+PANAS_Positive_Start <- PANAS_Positive_Start%>%
+  filter(ID != "12002" & ID != "12009") %>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+
+PANAS_Negative_Start <- PANAS_Negative_Start%>%
+  filter(ID != "12002" & ID != "12009") %>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+
+IOS_Pre <- IOS_Pre%>%
+  filter(ID != "12002" & ID != "12009") %>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+```
+
+To establish significant difference between time points, I will run a Repeated Measures ANOVA for each variable. If this test shows significant difference between sample means at each timepoint, I will continue with further mixed model analysis. 
+
+Set up each data frame for analysis.
+```{r}
+PANAS_Positive_Start<-PANAS_Positive_Start%>%
+  gather(key="time", value="score", "1", "2", "3", "4", "5", "6", "7") %>%
+  convert_as_factor(ID)
+
+PANAS_Negative_Start<- PANAS_Negative_Start%>%
+ gather(key="time", value="score", "1", "2", "3", "4", "5", "6", "7")%>%
+  convert_as_factor(ID)
+
+IOS_Pre <- IOS_Pre%>%
+  gather(key="time", value="score", "1", "2", "3", "4", "5", "6", "7") %>%
+  convert_as_factor(ID)
+
+```
+
+Y = PANAS_Pos (Scalar)
+X = Session (Nominal)
+
+PANAS_POS DESCRIPTIVE STATISTICS
+```{r}
+##Session Means##
+PANAS_Positive_Start %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+
+```
+```{r}
+##Individual Means##
+PANAS_Positive_Start%>%
+  group_by(ID)%>%
+  get_summary_stats(type="mean_sd")
+```
+Create a box plot for individual scores
+```{r}
+bxp_pos <- ggboxplot(PANAS_Positive_Start, x="time", y="score", add="point") 
+bxp_pos
+```
+Check for Outliers 
+```{r}
+PANAS_Positive_Start%>%
+  group_by(time) %>%
+  identify_outliers(score)
+```
+
+Check for Normality
+```{r}
+PANAS_Positive_Start%>%
+  ggqqplot("score", facet.by = "time")
+```
+PANAS_POS REPEATED MEASURES ANOVA
+```{r}
+anova.PANAS_Pos<- anova_test(data=PANAS_Positive_Start, dv=score, wid = ID, within = time)
+get_anova_table(anova.PANAS_Pos)
+```
+##F(6,60)=1.57, p=0.172
+
+PANAS_NEG DESCRIPTIVE STATISTICS
+```{r}
+##Session Means##
+PANAS_Negative_Start %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+
+```
+
+```{r}
+##Individual Means##
+PANAS_Negative_Start%>%
+  group_by(ID)%>%
+  get_summary_stats(type="mean_sd")
+```
+
+Create a box plot for individual scores
+```{r}
+bxp_pos <- ggboxplot(PANAS_Negative_Start, x="time", y="score", add="point") 
+bxp_pos
+```
+Check for Outliers 
+```{r}
+PANAS_Negative_Start%>%
+  group_by(time) %>%
+  identify_outliers(score)
+```
+Check for Normality
+```{r}
+PANAS_Negative_Start%>%
+  ggqqplot("score", facet.by = "time")
+```
+PANAS_NEG REPEATED MEASURES ANOVA
+```{r}
+anova.PANAS_Neg<- anova_test(data=PANAS_Negative_Start, dv=score, wid = ID, within = time)
+get_anova_table(anova.PANAS_Neg)
+```{r}
+```
+
+IOS DESCRIPTIVE STATISTICS
+```{r}
+##Session Means##
+IOS_Pre %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+
+```
+
+```{r}
+##Individual Means##
+IOS_Pre%>%
+  group_by(ID)%>%
+  get_summary_stats(type="mean_sd")
+```
+
+Create a box plot for individual scores
+```{r}
+bxp_pos <- ggboxplot(IOS_Pre, x="time", y="score", add="point") 
+bxp_pos
+```
+Check for Outliers 
+```{r}
+IOS_Pre%>%
+  group_by(time) %>%
+  identify_outliers(score)
+```
+Check for Normality
+```{r}
+IOS_Pre%>%
+  ggqqplot("score", facet.by = "time")
+```
+PANAS_NEG REPEATED MEASURES ANOVA
+```{r}
+anova.IOS<- anova_test(data=IOS_Pre, dv=score, wid = ID, within = time)
+get_anova_table(anova.IOS)
+```{r}
+```
+
+```{r}

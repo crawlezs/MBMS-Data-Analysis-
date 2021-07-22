@@ -1,0 +1,78 @@
+---
+title: "MBMS_DataAnalysis2"
+output: html_document
+---
+Open necessary packages
+```{r}
+library(tidyr)
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+```
+
+Read in Baseline, Post, Follow-Up Data
+Variables are:
+    Ryff's Wellbeing Scale -> Ryff_Total
+    Sleep Inventory -> Sleep_Total
+    Social Connectedness Scale -> SCS_Total
+    Percieved Stress Scale -> PSS_Total
+    Mindfulness Inventory -> MI_Total
+    Flow State Scale -> Flow_Total
+    Meaningfulness of Songwriting -> MofS_Total
+    BDI Raw Score Rounded -> BDI_RawScore
+    BAI Raw Score Rounded -> BAI_RawScore
+  
+```{r}
+library(readr)
+MBMS_BaselinePostFollowup <- read_csv("MBMS-BaselinePostFollowup.csv")
+View(MBMS_BaselinePostFollowup)
+```
+
+Filter data by event: Baseline, Post, Follow-up
+```{r}
+MBMS_Baseline <- MBMS_BaselinePostFollowup %>%
+  filter(Event=="Baseline")%>%
+  select(Ryff_Total, Sleep_Total, SCS_Total, PSS_Total, MI_Total,BDI_RawScore, BAI_RawScore)
+
+MBMS_Post <- MBMS_BaselinePostFollowup %>%
+  filter(Event=="Post")%>%
+  select(Ryff_Total, Sleep_Total, SCS_Total, PSS_Total, MI_Total,BDI_RawScore, BAI_RawScore)
+
+MBMS_Followup <-MBMS_BaselinePostFollowup %>%
+  filter(Event=="Follow-Up")%>%
+  select(Ryff_Total, Sleep_Total, SCS_Total, PSS_Total, MI_Total,BDI_RawScore, BAI_RawScore)
+```
+
+
+Run descriptive statistics at each timepoint.
+1. Baseline
+```{r}
+MBMS_Baseline %>%
+  sapply (mean,na.rm=TRUE)
+MBMS_Baseline %>%
+  sapply (sd,na.rm=TRUE) 
+MBMS_Baseline %>%
+  sapply (range, na.rm=TRUE)
+```
+2. Post
+```{r}
+MBMS_Post %>%
+  sapply (mean,na.rm=TRUE)
+MBMS_Post %>%
+  sapply (sd,na.rm=TRUE) 
+MBMS_Post %>%
+  sapply (range, na.rm=TRUE)
+```
+3. Follow-Up
+```{r}
+MBMS_Followup %>%
+  sapply (mean,na.rm=TRUE)
+MBMS_Followup %>%
+  sapply (sd,na.rm=TRUE) 
+MBMS_Followup %>%
+  sapply (range, na.rm=TRUE)
+```
+
+Linear Mixed Model 
