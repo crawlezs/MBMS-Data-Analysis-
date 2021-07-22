@@ -207,5 +207,21 @@ anova.IOS<- anova_test(data=IOS_Pre, dv=score, wid = ID, within = time)
 get_anova_table(anova.IOS)
 ```{r}
 ```
+IOS - REMOVAL OF OUTLIERS 
+```{r}
+IOS_Outliers <- IOS_Pre%>%
+  group_by(time) %>%
+  identify_outliers(score)
+
+print(IOS_Outliers)
+
+IOS_Pre_Filter <- IOS_Pre[-c(6,11),]
+```
+Run Repeated Measures ANOVA on IOS_Pre - Outliers 
+```{r}
+anova.IOS_Filter<- anova_test(data=IOS_Pre_Filter, dv=score, wid = ID, within = time)
+get_anova_table(anova.IOS_Filter)
+```
+
 
 ```{r}
