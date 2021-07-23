@@ -1,0 +1,232 @@
+---
+title: "MBMS_PrePostFollowup_DataAnalysis_Final"
+output: html_document
+---
+Open necessary packages
+```{r}
+library(tidyverse)
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+library(ggpubr)
+library(rstatix)
+library(datarium)
+library(readr)
+```
+
+Load Dataset
+```{r}
+BaselinePostFollowup <- read_csv("MBMSMAINDatabase-BaselinePostFollowup_DATA_LABELS_2021-07-22_1124.csv")
+```
+Remove any missing data from the data set. 
+```{r}
+BaselinePostFollowup <- BaselinePostFollowup%>%
+  filter(ID != "12002" & ID != "12009") %>%
+  filter(!is.na("time"),!is.na("ryff"),!is.na("sleep"),!is.na("scs"),!is.na("pss"),!is.na("mi"),!is.na("fss"),!is.na("mofs"),!is.na("bdi"),!is.na("bai"))
+```
+
+To establish significant difference between time points, I will run a Repeated Measures ANOVA for each variable. If this test shows significant difference between sample means at each timepoint.
+
+Separate each variable and set up data frame for analysis. 
+```{r}
+ryff <- BaselinePostFollowup[,c("ID", "time", "ryff")]
+ryff<- ryff%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+sleep <- BaselinePostFollowup[,c("ID", "time", "sleep")]
+sleep<- sleep%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+scs <- BaselinePostFollowup[,c("ID", "time", "scs")]
+scs<- scs%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+pss <- BaselinePostFollowup[,c("ID", "time", "pss")]
+pss<- pss%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+mi <- BaselinePostFollowup[,c("ID", "time", "mi")]
+mi<- mi%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+fss <- BaselinePostFollowup[,c("ID", "time", "fss")]
+fss<- fss%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+mofs <- BaselinePostFollowup[,c("ID", "time", "mofs")]
+mofs<- mofs%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+bdi <- BaselinePostFollowup[,c("ID", "time", "bdi")]
+bdi<- bdi%>%
+  convert_as_factor(ID)
+```
+
+```{r}
+bai <- BaselinePostFollowup[,c("ID", "time", "bai")]
+bai<- bai%>%
+  convert_as_factor(ID)
+```
+
+DESCRIPTIVE STATISTICS 
+```{r}
+##Session Means##
+ryff %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+sleep %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+scs %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+pss %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+mi %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+fss %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+mofs %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+bdi %>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+bai%>%
+  group_by(time)%>%
+  get_summary_stats(type="mean_sd")
+
+```
+
+Create box plot for each measure
+```{r}
+bxp_ryff <- ggboxplot(ryff, x="time", y="ryff", add="point") 
+bxp_ryff
+bxp_sleep <- ggboxplot(sleep, x="time", y="sleep", add="point") 
+bxp_sleep
+bxp_scs <- ggboxplot(scs, x="time", y="scs", add="point") 
+bxp_scs
+bxp_pss <- ggboxplot(pss, x="time", y="pss", add="point") 
+bxp_pss
+bxp_mi <- ggboxplot(mi, x="time", y="mi", add="point") 
+bxp_mi
+bxp_bdi <- ggboxplot(bdi, x="time", y="bdi", add="point") 
+bxp_bdi
+bxp_bai <- ggboxplot(bai, x="time", y="bai", add="point") 
+bxp_bai
+bxp_fss <- ggboxplot(fss, x="time", y="fss", add="point") 
+bxp_fss
+bxp_mofs <- ggboxplot(mofs, x="time", y="mofs", add="point") 
+bxp_mofs
+```
+
+Create QQ plot for each measure
+```{r}
+  ggqqplot(ryff, "ryff", facet.by = "time")
+  ggqqplot(sleep, "sleep", facet.by = "time")
+  ggqqplot(scs, "scs", facet.by = "time")
+  ggqqplot(pss, "pss", facet.by = "time")
+  ggqqplot(mi, "mi", facet.by = "time")
+  ggqqplot(bdi,"bdi", facet.by = "time")
+  ggqqplot(bai,"bai", facet.by = "time")
+  ggqqplot(fss,"fss", facet.by = "time")
+  ggqqplot(mofs,"mofs", facet.by = "time")
+
+```{r}
+```
+Check for Outliers 
+```{r}
+ryff%>%
+  group_by(time) %>%
+  identify_outliers(ryff)
+sleep%>%
+  group_by(time) %>%
+  identify_outliers(sleep) 
+scs%>%
+  group_by(time) %>%
+  identify_outliers(scs) 
+pss%>%
+  group_by(time) %>%
+  identify_outliers(pss) 
+mi%>%
+  group_by(time) %>%
+  identify_outliers(mi)
+bdi%>%
+  group_by(time) %>%  
+  identify_outliers(bdi)
+bai%>%
+  group_by(time) %>%
+  identify_outliers(bai)
+fss%>%
+  group_by(time) %>%
+  identify_outliers(fss)
+mofs%>%
+  group_by(time) %>%
+  identify_outliers(mofs)
+```
+
+REPEATED MEASURES ANOVAs
+```{r}
+anova.ryff<- anova_test(data=ryff, dv=ryff, wid = ID, within = time)
+get_anova_table(anova.ryff)
+```
+```{r}
+anova.sleep<- anova_test(data=sleep, dv=sleep, wid = ID, within = time)
+get_anova_table(anova.sleep)
+```
+```{r}
+anova.scs<- anova_test(data=scs, dv=scs, wid = ID, within = time)
+get_anova_table(anova.scs)
+```
+```{r}
+anova.pss<- anova_test(data=pss, dv=pss, wid = ID, within = time)
+get_anova_table(anova.pss)
+```
+```{r}
+anova.mi<- anova_test(data=mi, dv=mi, wid = ID, within = time)
+get_anova_table(anova.mi)
+```
+```{r}
+anova.bdi<- anova_test(data=bdi, dv=bdi, wid = ID, within = time)
+get_anova_table(anova.bdi)
+```
+
+```{r}
+anova.bai<- anova_test(data=bai, dv=bai, wid = ID, within = time)
+get_anova_table(anova.bai)
+```
+Account for extreme outliers:
+BDI, Time=3, ID=12010
+BAI, Time=3, ID = 12003
+```{r}
+bdi_Filter <- bdi[-c(24),]
+anova.bdi_filter <-anova_test(data=bdi_Filter, dv=bdi, wid = ID, within = time)
+get_anova_table(anova.bdi_filter)
+```
+
+```{r}
+bai_filter <- bai[-c(6),]
+anova.bai_filter <-anova_test(data=bai_filter, dv=bai, wid = ID, within = time)
+get_anova_table(anova.bai_filter)
+```
+
+
