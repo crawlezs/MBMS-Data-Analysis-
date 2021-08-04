@@ -2,9 +2,12 @@
 title: "PANASPrePos_Final"
 output: html_document
 ---
+This document contains analysis of PANAS positive scores from MBMS participants taken before each session at 7 timepoints, 1,2,3,4,5,6,7. The first analysis will be a Mixed Model where time is nested by session, and only pre-session scores are used. 
+
 Open necessary packages
 ```{r}
 library(tidyverse)
+library(tidyr)
 library(tibble)
 library(dplyr)
 library(data.table)
@@ -34,5 +37,67 @@ PANAS_Positive_Start <- PANAS_Positive_Start%>%
          !is.na ("7"))
 ```
 
+The model: Mixed model with variables ID, Time, and Score. Time is fixed. 
+
+Set up each data frame for analysis.
+```{r}
+PANAS_Positive_Start<-PANAS_Positive_Start%>%
+  gather(key="time", value="score", "1", "2", "3", "4", "5", "6", "7") %>%
+  convert_as_factor(ID) 
+  
+as.numeric(unlist("score"))
+score<- as.numeric("score")
+  
+PANAS_Positive_Start<- PANAS_Positive_Start%>%
+  as.numeric(unlist("score")) %>%
+  score<- as.numeric("score")
+```
+
+Check for Normality
+```{r}
+PANAS_Positive_Start%>%
+  ggqqplot("score", facet.by = "time")
+```
+
+Load Data Set: PANAS_Positive Mean-Centered
+```{r}
+library(readxl)
+PANAS_Pos_Scale <- read_excel("PANAS_Pos_Scale.xlsx", 
+    sheet = "Mean Centered", col_types = c("text", 
+        "text", "numeric"))
+```
+
+Check for Normality
+```{r}
+PANAS_Pos_Scale%>%
+  ggqqplot("score", facet.by = "time")
+```
+
+I'll plot the centered data before running an analysis model. 
+```{r}
+lineplot <- ggplot(data=PANAS_Pos_Scale, aes(y=score, x=time, color=ID, group=ID)) + 
+  geom_point() + geom_line() +
+  ggtitle("Positive PANAS Scores across Sessions, by individual ") + 
+  theme(legend.position = "none") + scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))
+lineplot
+
+```
+Fit a mixed model for PANAS Positive data frame.
+```{r}
+head(PANAS_Pos_Scale)
+model1<- lmer(score ~ time + (1|ID), data=PANAS_Pos_Scale)
+summary(model1)
+anova(model1)
+```
+# Estimate of the variance explained by the random effect (ID)# 
+      = 59.47(7.712)
+# Estimate of the fixed effects of time#
+      intercept = 0.948 
+      time2 = 0
+      time3 = -1.250
+      time4 = -0.083
+      time5 = -2.750
+      time6 = -2.333
+      time7 = 0.763
 
 ```{r}
