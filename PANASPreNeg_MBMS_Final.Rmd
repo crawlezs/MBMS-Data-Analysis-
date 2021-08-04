@@ -33,7 +33,114 @@ PANAS_Negative_Start <- PANAS_Negative_Start%>%
          !is.na ("7"))
 ```
 
-```{r}
+The model: Mixed model with variables ID, Time, and Score. Time is fixed. 
 
+Set up each data frame for analysis.
+```{r}
+PANAS_Negative_Start<-PANAS_Negative_Start%>%
+  gather(key="time", value="score", "1", "2", "3", "4", "5", "6", "7") %>%
+  convert_as_factor(ID) 
+  
+as.numeric(unlist("score"))
+score<- as.numeric("score")
+```
+
+Check for Normality
+```{r}
+PANAS_Negative_Start%>%
+  ggqqplot("score", facet.by = "time")
+```
+Load in data set: PANAS Negative- Mean Centered
+```{r}
+library(readxl)
+PANAS_Neg_Scale <- read_excel("PANAS_Neg_scale.xlsx", 
+    sheet = "Mean-Centered", col_types = c("text", 
+        "text", "numeric"))
+```
+
+Check for Normality
+```{r}
+PANAS_Neg_Scale%>%
+  ggqqplot("score", facet.by = "time")
+```
+I'll plot the centered data before running an analysis model. 
+```{r}
+lineplot <- ggplot(data=PANAS_Neg_Scale, aes(y=score, x=time, color=ID, group=ID)) + 
+  geom_point() + geom_line() +
+  ggtitle("Negative PANAS Scores across Sessions, by individual ") + 
+  theme(legend.position = "none") + scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))
+lineplot
+
+```
+
+Fit a mixed model for PANAS Negative data frame.
+```{r}
+model2<- lmer(score ~ time + (1|ID), data=PANAS_Neg_Scale)
+summary(model2)
+anova(model2)
+
+```
+# Estimate of the variance explained by the random effect (ID)# 
+      = 13.944 (3.734)
+      resid= 6.842 (low)
+      
+# Estimate of the fixed effects of time#
+      intercept = 3.319 
+      time2 = -2.250
+      time3 = -3.583
+      time4 = -3.583
+      time5 = -3.417
+      time6 = -4.833
+      time7 = -5.385
+      
+```{r}
+ci2 <- confint(model2, method="boot", nsim=10)
+ci2 <- tibble::rownames_to_column(data.frame(ci2), "Term") 
+colnames(ci2)<- c("Term", "CI 2.5%", "CI 97.5%")
+knitr::kable(ci[3:9,])
+```
+# Estimate of the fixed effects of time#
+      intercept = 3.319 **
+      time2 = -2.250
+      time3 = -3.583
+      time4 = -3.583 **
+      time5 = -3.417
+      time6 = -4.833 **
+      time7 = -5.385 **
+      
+
+```{r}
+ggplot(data=PANAS_Neg_Scale, 
+       aes(x=time, y=score, col=ID, shape=ID)) + 
+  geom_jitter(size=2) + 
+  theme(legend.position = "none") + 
+    scale_shape_manual(values = 
+                       c(14,15,16,17,18,19,20,21,22,23,24,25)) +
+  geom_abline(intercept = fixef(model2)[1], #Regression Line (RL).
+              slope=fixef(model2)[2]) +                
+  geom_abline(intercept = ci2$`CI 97.5%`[5], 
+              slope=ci2$`CI 97.5%`[6], col="grey") + #Upper Bound of RL
+  geom_abline(intercept = ci2$`CI 2.5%`[5], 
+              slope=ci2$`CI 2.5%`[6], col="grey") +  #Lower Bound of RL
+  scale_x_discrete(c(1,2,3,4,5,6,7)) +
+  scale_y_continuous(breaks= c(-10, -5, 0, 5, 10)) +
+  ggtitle("PANAS Negative Scores plotted on Session")
+```
+
+```{r}
+ggplot(data=PANAS_Neg_Scale, 
+       aes(y=score, x=time, color=ID, group=ID)) + 
+  geom_point() + geom_line() +
+  scale_color_manual(values = c("dodgerblue4","dodgerblue2","steelblue3", "steelblue1","lightsteelblue3","lightsteelblue1","lightskyblue4","lightskyblue3","lightskyblue1","paleturquoise3","paleturquoise1","royalblue1"))+
+  ggtitle("Negative PANAS Scores across Sessions") + 
+  theme(legend.position = "none") + 
+  scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))+
+  geom_abline(intercept = fixef(model2)[1], #Regression Line (RL).
+              slope=fixef(model2)[2], col="red") +                
+  geom_abline(intercept = ci2$`CI 97.5%`[5], 
+              slope=ci2$`CI 97.5%`[6], col="black") + #Upper Bound of RL
+  geom_abline(intercept = ci2$`CI 2.5%`[5], 
+              slope=ci2$`CI 2.5%`[6], col="black") + #Lower Bound of RL
+  geom_text(aes(2, -1.25, label="X"), col="red", size=10)
 ```
 

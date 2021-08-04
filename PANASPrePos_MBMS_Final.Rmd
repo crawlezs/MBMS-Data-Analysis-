@@ -112,5 +112,22 @@ knitr::kable(ci[3:9,])
 
 ```
 
+```{r}
+ggplot(data=PANAS_Pos_Scale, 
+       aes(y=score, x=time, color=ID, group=ID)) + 
+  geom_point() + geom_line() +
+  scale_color_manual(values = c("dodgerblue4","dodgerblue2","steelblue3", "steelblue1","lightsteelblue3","lightsteelblue1","lightskyblue4","lightskyblue3","lightskyblue1","paleturquoise3","paleturquoise1","royalblue1"))+
+  ggtitle("Positive PANAS Scores across Sessions") + 
+  theme(legend.position = "none") + 
+  scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))+
+  geom_abline(intercept = fixef(model1)[1], #Regression Line (RL).
+              slope=fixef(model1)[2], col="red") +                
+  geom_abline(intercept = ci$`CI 97.5%`[5], 
+              slope=ci$`CI 97.5%`[6], col="black") + #Upper Bound of RL
+  geom_abline(intercept = ci$`CI 2.5%`[5], 
+              slope=ci$`CI 2.5%`[6], col="black") + #Lower Bound of RL
+  geom_text(aes(4, 0.5, label="X"), col="red", size=10)
+```
+
 
 ```{r}
