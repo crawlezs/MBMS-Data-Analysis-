@@ -91,13 +91,26 @@ anova(model1)
 ```
 # Estimate of the variance explained by the random effect (ID)# 
       = 59.47(7.712)
+      resid= 23.89 (low)
 # Estimate of the fixed effects of time#
       intercept = 0.948 
-      time2 = 0
+      time2 = 0.000
       time3 = -1.250
       time4 = -0.083
       time5 = -2.750
       time6 = -2.333
       time7 = 0.763
+
+    Time shows insignificant effect on score, and most variance is accounted for in random effects. No fixed effects are significant according to 95% CI. 
+
+
+```{r}
+ci <- confint(model1, method="boot", nsim=10)
+ci <- tibble::rownames_to_column(data.frame(ci), "Term") 
+colnames(ci)<- c("Term", "CI 2.5%", "CI 97.5%")
+knitr::kable(ci[3:9,])
+
+```
+
 
 ```{r}
