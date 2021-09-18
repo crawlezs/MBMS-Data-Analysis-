@@ -165,3 +165,19 @@ anova.ios<- anova_test(data=StartOnly, dv = ios, wid = id, within = session)
 anova.ios <- as_tibble(get_anova_table(anova.ios))
 print(anova.ios)
 ```
+
+```{r}
+#merge ANOVA tables 
+startonly_ANOVA <- full_join(anova.panaspos, anova.panasneg)
+startonly_ANOVA <- full_join(startonly_ANOVA, anova.ios)
+
+startonly_ANOVA$measure <- c("PANAS Positive", "PANAS Negative", "IOS")
+startonly_ANOVA <- relocate(startonly_ANOVA, measure, .before = "Effect")
+
+print(startonly_ANOVA)
+
+#Save ANOVA tables
+write.csv(startonly_ANOVA,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartOnly_ANOVA.csv", row.names = FALSE)
+
+```
+
