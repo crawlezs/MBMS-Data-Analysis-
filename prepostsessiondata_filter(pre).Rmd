@@ -1,0 +1,46 @@
+---
+title: "prepostsessiondata_filter(pre)"
+output: html_document
+---
+Load necessary packages
+```{r}
+library(tibble)
+library(dplyr)
+library(data.table)
+```
+
+Load data
+```{r}
+
+```
+
+
+
+
+
+Filter REDCap data for desired IDs. In this round, 12002 is excluded because the child was TD, and 12009 did not complete the study. 
+```{r}
+PrePostData <- PrePostData %>%
+  filter(Record_ID != "12002" & Record_ID != "12009")
+```
+
+Remove missing data
+```{r}
+PrePostData<- PrePostData %>%
+  filter(!is.na(PANAS_Start_Pos),
+         !is.na(PANAS_Start_Neg),
+         !is.na(IOS_Pre),
+         !is.na(PANAS_End_Pos),
+         !is.na(PANAS_End_Neg),
+         !is.na(IOS_Post))
+```
+
+For the first analysis, I will only be using Pre data points.
+Filter for only this data. Named _An1 for analysis 1.
+```{r}
+PreOnlyData_An1 <- PrePostData %>%
+  select(Record_ID, Session, PANAS_Start_Pos, PANAS_Start_Neg, IOS_Pre)
+
+as_tibble(PreOnlyData_An1)
+```
+
