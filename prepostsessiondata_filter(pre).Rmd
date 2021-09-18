@@ -54,6 +54,36 @@ PrePostData$session <- as.integer(PrePostData$session)
 print(PrePostData)
 ```
 
+```{r}
+#create a new df with pre data only 
+PreData <- PrePostData %>% select(id, session, panas_pos = panas_start_pos, panas_neg = panas_start_neg, ios = ios_start)
+
+print(PreData)
+
+#create a new variable "time"
+PreData$time <- as.integer(0)
+PreData <- relocate(PreData, time, .after = session)
+print(PreData)
+```
+```{r}
+#create a new df with post data only 
+PostData <- PrePostData %>% select(id, session, panas_pos = panas_end_pos, panas_neg = panas_end_neg, ios = ios_end)
+
+#create a new variable "time"
+PostData$time <- as.integer(1)
+PostData <- relocate(PostData, time, .after = session)
+print(PostData)
+```
+```{r}
+#join PreData and PostData 
+PrePostData <- merge(PreData, PostData, all=TRUE)
+print(PrePostData)
+
+#save tidy version of dataset
+write.csv(PrePostData,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\PrePostData_Tidy.csv", row.names = FALSE)
+```
+
+
 
 
 
