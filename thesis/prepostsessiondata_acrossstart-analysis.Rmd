@@ -2,3 +2,88 @@
 title: "prepostsessiondata_acrossstart-analysis"
 output: html_document
 ---
+
+Load necessary packages
+```{r}
+library(tidyr)
+library(tidyREDCap)
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+library(qwraps2)
+library(rstatix)
+library(ggpubr)
+```
+
+Load data
+```{r}
+print(PrePostData)
+
+#where session = number of the session
+#where time(0)= start and time(1)= end
+```
+The first analysis will be a linear mixed model of PANAS and IOS scores across the 7 sessions, using only start scores. 
+
+**Steps of analysis:**
+1. Create a data frame of Start data
+2. Run descriptive statistics of panas_pos, panas_neg, and ios
+    a. Score means by Session
+    b. Score means by ID
+    c. Boxplot of Scores over Session, by ID
+    d. QQ plot of Scores over Session, by ID
+    e. Check for outliers 
+    f. Check for normality 
+3. Run repeated measures ANOVA to establish significant difference between scores across time
+    a. gather data frame by time
+    b. run anova with unchanged df
+    c. run anova with outliers removed
+4.
+
+
+1. Create new data frame, start only 
+```{r}
+StartOnly <- filter(PrePostData, time==0)
+StartOnly <- select(StartOnly, -time)
+print(StartOnly)
+```
+2. Run Descriptive Statistics
+```{r}
+###Session Means##
+StartOnly %>%
+  group_by(session)%>%
+  get_summary_stats(type="mean_sd")
+
+##Individual Means##
+StartOnly %>%
+  group_by(id)%>%
+  get_summary_stats(type="mean_sd")
+```
+Create a box plot for individual scores
+```{r}
+bxp_pos <- ggboxplot(StartOnly, x= 'session', y= 'panas_pos', add="point", title= "PANAS Positive Scores") 
+bxp_pos
+
+bxp_neg <- ggboxplot(StartOnly, x= 'session', y= 'panas_neg', add="point", title= "PANAS Negative Scores") 
+bxp_neg
+
+bxp_ios <- ggboxplot(StartOnly, x= 'session', y= 'ios', add="point", title = "IOS Scores") 
+bxp_ios
+```
+
+
+Check for Outliers 
+```{r}
+PANAS_Positive_Start%>%
+  group_by(time) %>%
+  identify_outliers(score)
+```
+
+Check for Normality
+```{r}
+PANAS_Positive_Start%>%
+  ggqqplot("score", facet.by = "time")
+```
+
+
