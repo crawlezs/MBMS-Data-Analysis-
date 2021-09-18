@@ -51,39 +51,85 @@ print(StartOnly)
 2. Run Descriptive Statistics
 ```{r}
 ###Session Means##
-StartOnly %>%
+Session_Means <- as_tibble(
+  StartOnly %>%
   group_by(session)%>%
-  get_summary_stats(type="mean_sd")
+  get_summary_stats(type="mean_sd"))
+
+print(Session_Means)
 
 ##Individual Means##
-StartOnly %>%
+ID_Means <- as_tibble(
+  StartOnly %>%
   group_by(id)%>%
-  get_summary_stats(type="mean_sd")
+  get_summary_stats(type="mean_sd"))
+
+print(ID_Means)
+
+#Save descriptive tables
+write.csv(Session_Means,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartOnly_SessionMeans.csv", row.names = FALSE)
+
+write.csv(ID_Means,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartOnly_IDMeans.csv", row.names = FALSE)
 ```
-Create a box plot for individual scores
+
 ```{r}
+#Create a box plot: PANAS POS
 bxp_pos <- ggboxplot(StartOnly, x= 'session', y= 'panas_pos', add="point", title= "PANAS Positive Scores") 
 bxp_pos
 
+#Save box plot: PANAS POS
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\panas_pos_bxplot.png", plot = last_plot(), scale = 1)
+
+#Create a box plot: PANAS NEG
 bxp_neg <- ggboxplot(StartOnly, x= 'session', y= 'panas_neg', add="point", title= "PANAS Negative Scores") 
 bxp_neg
 
+#Save box plot: PANAS NEG
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\panas_nrg_bxplot.png", plot = last_plot(),scale = 1)
+
+#Create a box plot: IOS
 bxp_ios <- ggboxplot(StartOnly, x= 'session', y= 'ios', add="point", title = "IOS Scores") 
 bxp_ios
+
+#Save box plot: IOS
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\ios_bxplot.png", plot = last_plot(),scale = 1)
 ```
 
 
-Check for Outliers 
 ```{r}
-PANAS_Positive_Start%>%
-  group_by(time) %>%
-  identify_outliers(score)
-```
+#Check for Outliers
+outliers_panaspos <- as_tibble(
+  StartOnly%>%
+  group_by(session) %>%
+  identify_outliers(panas_pos))
 
-Check for Normality
+outliers_panasneg <- as_tibble(
+StartOnly%>%
+  group_by(session) %>%
+  identify_outliers(panas_neg))
+
+outliers_ios <- as_tibble(
+StartOnly%>%
+  group_by(session) %>%
+  identify_outliers(ios))
+
+outliers <- full_join(outliers_panaspos, outliers_panasneg)
+outliers <- full_join(outliers, outliers_ios)
+print(outliers)
+
+write.csv(outliers,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartOnly_Outliers.csv", row.names = FALSE)
+
+```
 ```{r}
-PANAS_Positive_Start%>%
-  ggqqplot("score", facet.by = "time")
+#check for Normality
+StartOnly%>%
+  ggqqplot("panas_pos", facet.by = "session", title = "PANAS Positive Scores")
+
+StartOnly%>%
+  ggqqplot("panas_neg", facet.by = "session", title = "PANAS Negative Scores")
+
+StartOnly%>%
+  ggqqplot("ios", facet.by = "session", title = "IOS Scores")
 ```
 
 
