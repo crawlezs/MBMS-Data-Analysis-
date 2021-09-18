@@ -143,4 +143,25 @@ StartOnly%>%
 ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\ios_qqplot.png", plot = last_plot(),scale = 1)
 ```
 
+3. Run Repeated Measures ANOVA
 
+```{r}
+#PANAS POS
+anova.panaspos<- anova_test(data=StartOnly, dv = panas_pos, wid = id, within = session)
+anova.panaspos <- as_tibble(get_anova_table(anova.panaspos))
+print(anova.panaspos)
+```
+
+```{r}
+#PANAS NEG
+anova.panasneg<-anova_test(data=StartOnly, dv = panas_neg, wid = id, within = session)
+anova.panasneg <- as_tibble(get_anova_table(anova.panasneg))
+print(anova.panasneg)
+```
+
+```{r}
+#IOS
+anova.ios<- anova_test(data=StartOnly, dv = ios, wid = id, within = session)
+anova.ios <- as_tibble(get_anova_table(anova.ios))
+print(anova.ios)
+```

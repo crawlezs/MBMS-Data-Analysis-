@@ -1,0 +1,4 @@
+"measure","Effect","DFn","DFd","F","p","p<.05","ges"
+"PANAS Positive","session",6,60,1.569,0.172,"",0.037
+"PANAS Negative","session",6,60,4.427,0.000906,"*",0.116
+"IOS","session",1.82,18.16,24.796,9.51e-06,"*",0.345
