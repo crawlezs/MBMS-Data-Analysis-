@@ -84,33 +84,18 @@ write.csv(PrePostData,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Da
 ```
 
 
-
-
-
-
 Filter REDCap data for desired IDs. In this round, 12002 is excluded because the child was TD, and 12009 did not complete the study. 
 ```{r}
+#Remove 12002 and 12009
 PrePostData <- PrePostData %>%
-  filter(Record_ID != "12002" & Record_ID != "12009")
-```
+  filter(id != "12002" & id != "12009")
 
-Remove missing data
-```{r}
+
+# Remove missing data
 PrePostData<- PrePostData %>%
-  filter(!is.na(PANAS_Start_Pos),
-         !is.na(PANAS_Start_Neg),
-         !is.na(IOS_Pre),
-         !is.na(PANAS_End_Pos),
-         !is.na(PANAS_End_Neg),
-         !is.na(IOS_Post))
+  filter(!is.na(panas_pos),
+         !is.na(panas_neg),
+         !is.na(ios))
 ```
 
-For the first analysis, I will only be using Pre data points.
-Filter for only this data. Named _An1 for analysis 1.
-```{r}
-PreOnlyData_An1 <- PrePostData %>%
-  select(Record_ID, Session, PANAS_Start_Pos, PANAS_Start_Neg, IOS_Pre)
-
-as_tibble(PreOnlyData_An1)
-```
-
+DF = PrePostData is now ready for analysis
