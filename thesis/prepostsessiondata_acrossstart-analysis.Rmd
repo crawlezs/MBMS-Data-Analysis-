@@ -121,15 +121,26 @@ write.csv(outliers,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-
 
 ```
 ```{r}
-#check for Normality
+#Check for Normality: PANAS POS
 StartOnly%>%
   ggqqplot("panas_pos", facet.by = "session", title = "PANAS Positive Scores")
 
+#Save plot: PANAS POS
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\panaspos_qqplot.png", plot = last_plot(),scale = 1)
+
+#Check for Normality: PANAS NEG
 StartOnly%>%
   ggqqplot("panas_neg", facet.by = "session", title = "PANAS Negative Scores")
 
+#Save plot: PANAS NEG
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\panasneg_qqplot.png", plot = last_plot(),scale = 1)
+
+#Check for Normality: IOS
 StartOnly%>%
   ggqqplot("ios", facet.by = "session", title = "IOS Scores")
+
+#Save plot: IOS
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\ios_qqplot.png", plot = last_plot(),scale = 1)
 ```
 
 
