@@ -1,0 +1,101 @@
+---
+title: "prepostsessiondata_filter"
+output: html_document
+---
+Load necessary packages
+```{r}
+library(tidyr)
+library(tidyREDCap)
+library(tibble)
+library(dplyr)
+library(data.table)
+```
+
+Load data
+```{r}
+library(readr)
+PrePostSession_PANASIOS_20210918 <- read_csv("thesis/data/PrePostSession_PANASIOS_20210918.csv", 
+    col_types = cols(`Record ID` = col_character(), 
+        `Repeat Instrument` = col_skip(), 
+        `Repeat Instance` = col_skip(), `PANAS Start Positive` = col_integer(), 
+        `PANAS Start Negative` = col_integer(), 
+        `PANAS End Positive` = col_integer(), 
+        `PANAS End Negative` = col_integer(), 
+        `Check the picture that best describes how connected or close you feel to the music therapist. (see image above)...9` = col_integer()))
+```
+
+Tidy Data
+Steps include:
+1. Rename variables to lowercase, _, format
+2. Convert "Event" to integers, 1, 2, 3, ..., 7
+3. Create a new column with pre/post as 0, 1
+
+```{r}
+#add df as PrePostData
+PrePostData <- PrePostSession_PANASIOS_20210918
+
+#create new column names that agree with tidy practices
+colnames(PrePostData) <- c("id", "session", "panas_start_pos", "panas_start_neg", "panas_end_pos", "panas_end_neg", "ios_start", "ios_end")
+
+print(PrePostData)
+```
+```{r}
+#Rename session values as integers
+PrePostData$session[PrePostData$session == "Session 1 (Arm 1: Arm 1)"] <- "1"
+PrePostData$session[PrePostData$session == "Session 2 (Arm 1: Arm 1)"] <- "2"
+PrePostData$session[PrePostData$session == "Session 3 (Arm 1: Arm 1)"] <- "3"
+PrePostData$session[PrePostData$session == "Session 4 (Arm 1: Arm 1)"] <- "4"
+PrePostData$session[PrePostData$session == "Session 5 (Arm 1: Arm 1)"] <- "5"
+PrePostData$session[PrePostData$session == "Session 6 (Arm 1: Arm 1)"] <- "6"
+PrePostData$session[PrePostData$session == "Session 7 (Arm 1: Arm 1)"] <- "7"
+
+PrePostData$session <- as.integer(PrePostData$session)
+
+print(PrePostData)
+```
+
+```{r}
+#create a new df with pre data only 
+PreData <- PrePostData %>% select(id, session, panas_pos = panas_start_pos, panas_neg = panas_start_neg, ios = ios_start)
+
+print(PreData)
+
+#create a new variable "time"
+PreData$time <- as.integer(0)
+PreData <- relocate(PreData, time, .after = session)
+print(PreData)
+```
+```{r}
+#create a new df with post data only 
+PostData <- PrePostData %>% select(id, session, panas_pos = panas_end_pos, panas_neg = panas_end_neg, ios = ios_end)
+
+#create a new variable "time"
+PostData$time <- as.integer(1)
+PostData <- relocate(PostData, time, .after = session)
+print(PostData)
+```
+```{r}
+#join PreData and PostData 
+PrePostData <- merge(PreData, PostData, all=TRUE)
+print(PrePostData)
+
+#save tidy version of dataset
+write.csv(PrePostData,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\PrePostData_Tidy.csv", row.names = FALSE)
+```
+
+
+Filter REDCap data for desired IDs. In this round, 12002 is excluded because the child was TD, and 12009 did not complete the study. 
+```{r}
+#Remove 12002 and 12009
+PrePostData <- PrePostData %>%
+  filter(id != "12002" & id != "12009")
+
+
+# Remove missing data
+PrePostData<- PrePostData %>%
+  filter(!is.na(panas_pos),
+         !is.na(panas_neg),
+         !is.na(ios))
+```
+
+DF = PrePostData is now ready for analysis
