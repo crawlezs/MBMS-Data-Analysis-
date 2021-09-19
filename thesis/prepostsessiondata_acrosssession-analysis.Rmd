@@ -83,6 +83,7 @@ bxp_ios_startend
 #Save box plot: PANAS POS
 ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_ios_bxplot.png", plot = bxp_ios_startend, scale = 1)
 ```
+
 ```{r}
 #Check for Outliers
 outliers_panaspos_startend <- as_tibble(
@@ -107,12 +108,36 @@ print(outliers_startend)
 write.csv(outliers_startend,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartEnd_Outliers.csv", row.names = FALSE)
 ```
 
+```{r}
+#Create QQ plot: PANAS POS
+qqplot_panaspos <- ggqqplot(PrePostData, "panas_pos", ggtheme = theme_bw()) + facet_grid(time ~ session, labeller = "label_both")
+
+qqplot_panaspos
+
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_panaspos_qqplot.png", plot = qqplot_panaspos, scale = 1)
+
+#Create QQ plot: PANAS POS
+qqplot_panasneg <- ggqqplot(PrePostData, "panas_neg", ggtheme = theme_bw()) + facet_grid(time ~ session, labeller = "label_both")
+
+qqplot_panasneg
+
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_panasneg_qqplot.png", plot = qqplot_panasneg, scale = 1)
+
+#Create QQ plot: PANAS POS
+qqplot_ios <- ggqqplot(PrePostData, "ios", ggtheme = theme_bw()) + facet_grid(time ~ session, labeller = "label_both")
+
+qqplot_ios
+
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_ios_qqplot.png", plot = qqplot_ios, scale = 1)
+```
+ 
 
 3. Run repeated measures ANOVA across individual sessions 
 
 ```{r}
 #PANAS POS
-anova.panaspos_session<- anova_test(data=PrePostData, dv = panas_pos, wid = id, within = time, effect.size = pes)
+PrePostData %>%
+  anova.panaspos_session<- anova_test(data=PrePostData, dv = panas_pos, wid = id, within = time, effect.size = pes)
 get_anova_table(anova.panaspos_session)
 ```
 ```
