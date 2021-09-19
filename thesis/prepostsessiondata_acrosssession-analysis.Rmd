@@ -135,9 +135,51 @@ ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\M
 3. Run repeated measures ANOVA across individual sessions 
 
 ```{r}
-#PANAS POS
-PrePostData %>%
-  anova.panaspos_session<- anova_test(data=PrePostData, dv = panas_pos, wid = id, within = time, effect.size = pes)
-get_anova_table(anova.panaspos_session)
+#PANAS_POS
+anova_panaspos_startend <- PrePostData %>%
+  group_by(session) %>%
+  anova_test(dv = panas_pos, wid = id, within = time) 
+  
+anova_panaspos_startend <- as_tibble(anova_panaspos_startend)
+get_anova_table(anova_panaspos_startend)
+
+write.csv(anova_panaspos_startend,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartEnd_panaspos_anova.csv", row.names = FALSE)
 ```
+
+
+```{r}
+#PANAS_NEG
+anova_panasneg_startend <- PrePostData %>%
+  group_by(session) %>%
+  anova_test(dv = panas_neg, wid = id, within = time) 
+
+anova_panasneg_startend <- as_tibble(anova_panasneg_startend)  
+get_anova_table(anova_panasneg_startend)
+
+write.csv(anova_panasneg_startend,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartEnd_panasneg_anova.csv", row.names = FALSE)
 ```
+
+```{r}
+#IOS
+anova_ios_startend <- PrePostData %>%
+  group_by(session) %>%
+  anova_test(dv = ios, wid = id, within = time) 
+  
+anova_ios_startend <- as_tibble(anova_ios_startend)
+get_anova_table(anova_ios_startend)
+
+write.csv(anova_ios_startend,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartEnd_ios_anova.csv", row.names = FALSE)
+```
+```{r}
+#Save ANOVA tables
+
+
+```
+
+```
+
+```{r}
+
+```
+
+

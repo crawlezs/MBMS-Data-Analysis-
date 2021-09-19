@@ -43,6 +43,7 @@ library(ggpubr)
 
 Load data
 ```{r}
+#import data (note RMarkdown_filter should be run first)
 print(PrePostData)
 
 #where session = number of the session
@@ -105,6 +106,7 @@ ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-A
 
 
 ```{r}
+
 #Check for Outliers
 outliers_panaspos <- as_tibble(
   StartOnly%>%
@@ -126,7 +128,6 @@ outliers <- full_join(outliers, outliers_ios)
 print(outliers)
 
 write.csv(outliers,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartOnly_Outliers.csv", row.names = FALSE)
-
 ```
 ```{r}
 #Check for Normality: PANAS POS
