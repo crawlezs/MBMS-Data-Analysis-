@@ -7,7 +7,6 @@ The second analysis will be a linear mixed model of PANAS and IOS scores across 
 
 **Steps of analysis:**
 1. Load data frame of Start data
-2. Create variable of change across session
 2. Run descriptive statistics of change in panas_pos, panas_neg, and ios
     a. Score means by Session
     b. Score means by ID
@@ -25,3 +24,95 @@ The second analysis will be a linear mixed model of PANAS and IOS scores across 
     c. calculate confidence intervals
     d. plot data with model estimate
     
+Load necessary packages
+```{r}
+library(tidyr)
+library(tidyverse)
+library(tidyREDCap)
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+library(sjlabelled)
+library(sjPlot)
+library(sjmisc)
+library(qwraps2)
+library(rstatix)
+library(ggpubr)
+```
+
+1. Load data
+```{r}
+#import data (note RMarkdown_filter should be run first)
+print(PrePostData)
+```
+
+2. Summary Statistics 
+```{r}
+#Time Means#
+Time_Means <- as_tibble(
+  PrePostData %>%
+    group_by(time) %>%
+    get_summary_stats(panas_pos, panas_neg, ios, type = "mean_sd"))
+
+print(Time_Means)
+
+write.csv(Time_Means,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartEnd_timemeans.csv", row.names = FALSE)
+```
+
+```{r}
+#Create a box plot: PANAS POS
+bxp_pos_startend <- ggboxplot(PrePostData, x= 'time', y= 'panas_pos', add="point", title= "PANAS Positive Scores across Session") 
+bxp_pos_startend
+
+#Save box plot: PANAS POS
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_panaspos_bxplot.png", plot = bxp_pos_startend, scale = 1)
+
+#Create a box plot: PANAS NEG
+bxp_neg_startend <- ggboxplot(PrePostData, x= 'time', y= 'panas_neg', add="point", title= "PANAS Negative Scores across Session") 
+bxp_neg_startend
+
+#Save box plot: PANAS POS
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_panasneg_bxplot.png", plot = bxp_neg_startend, scale = 1)
+
+#Create a box plot: PANAS POS
+bxp_ios_startend <- ggboxplot(PrePostData, x= 'time', y= 'ios', add="point", title= "IOS Scores across Session") 
+bxp_ios_startend
+
+#Save box plot: PANAS POS
+ggsave("C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\StartEnd_ios_bxplot.png", plot = bxp_ios_startend, scale = 1)
+```
+```{r}
+#Check for Outliers
+outliers_panaspos_startend <- as_tibble(
+  PrePostData%>%
+  group_by(time) %>%
+  identify_outliers(panas_pos))
+
+outliers_panasneg_startend <- as_tibble(
+  PrePostData%>%
+  group_by(time) %>%
+  identify_outliers(panas_neg))
+
+outliers_ios_startend <- as_tibble(
+  PrePostData%>%
+  group_by(time) %>%
+  identify_outliers(ios))
+
+outliers_startend <- full_join(outliers_panaspos_startend, outliers_panasneg_startend)
+outliers_startend <- full_join(outliers_startend, outliers_ios_startend)
+print(outliers_startend)
+
+write.csv(outliers_startend,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartEnd_Outliers.csv", row.names = FALSE)
+```
+
+
+3. Run repeated measures ANOVA across individual sessions 
+
+```{r}
+#PANAS POS
+anova.panaspos_session<- anova_test(data=PrePostData, dv = panas_pos, wid = id, within = time, effect.size = pes)
+get_anova_table(anova.panaspos_session)
+```
+```

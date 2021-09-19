@@ -14,7 +14,7 @@ library(data.table)
 Load data
 ```{r}
 library(readr)
-PrePostSession_PANASIOS_20210918 <- read_csv("thesis/data/PrePostSession_PANASIOS_20210918.csv", 
+PrePostSession_20210918 <- read_csv("data/PrePostSession_PANASIOS_20210918.csv", 
     col_types = cols(`Record ID` = col_character(), 
         `Repeat Instrument` = col_skip(), 
         `Repeat Instance` = col_skip(), `PANAS Start Positive` = col_integer(), 
@@ -32,7 +32,7 @@ Steps include:
 
 ```{r}
 #add df as PrePostData
-PrePostData <- PrePostSession_PANASIOS_20210918
+PrePostData <- PrePostSession_20210918
 
 #create new column names that agree with tidy practices
 colnames(PrePostData) <- c("id", "session", "panas_start_pos", "panas_start_neg", "panas_end_pos", "panas_end_neg", "ios_start", "ios_end")
