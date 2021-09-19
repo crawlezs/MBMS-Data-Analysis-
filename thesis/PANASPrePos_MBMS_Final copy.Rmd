@@ -1,0 +1,106 @@
+---
+title: "PANASPrePos_Final"
+output: 
+  pdf_document: 
+    fig_caption: yes
+---
+This document contains analysis of PANAS positive scores from MBMS participants taken before each session at 7 timepoints, 1,2,3,4,5,6,7. The first analysis will be a Mixed Model where time is nested by session, and only pre-session scores are used. 
+
+Open necessary packages
+```{r}
+library(tidyverse)
+library(tidyr)
+library(tibble)
+library(dplyr)
+library(data.table)
+library(lme4)
+library(nlme)
+library(ggpubr)
+library(rstatix)
+library(datarium)
+```
+
+Load Dataset: PANAS_Positive_Start
+```{r}
+library(readxl)
+PANAS_Positive_Start <- read_excel("~/Desktop/MBMS Data Analysis/PANAS_Positive_Start.xlsx")
+```
+Remove any missing data from the data set. 
+```{r}
+PANAS_Positive_Start <- PANAS_Positive_Start%>%
+  filter(ID != "12002" & ID != "12009") %>%
+  filter(!is.na("1"),
+         !is.na ("2"), 
+         !is.na ("3"),
+         !is.na ("4"), 
+         !is.na ("5"),
+         !is.na ("6"), 
+         !is.na ("7"))
+```
+
+The model: Mixed model with variables ID, Time, and Score. Time is fixed. 
+
+Check for Normality
+```{r}
+PANAS_Pos_Scale%>%
+  ggqqplot("score", facet.by = "time")
+```
+
+I'll plot the centered data before running an analysis model. 
+```{r}
+lineplot <- ggplot(data=PANAS_Pos_Scale, aes(y=score, x=time, color=ID, group=ID)) + 
+  geom_point() + geom_line() +
+  ggtitle("Positive PANAS Scores across Sessions, by individual ") + 
+  theme(legend.position = "none") + scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))
+lineplot
+
+```
+Fit a mixed model for PANAS Positive data frame.
+```{r}
+head(PANAS_Pos_Scale)
+model1<- lmer(score ~ time + (1|ID), data=PANAS_Pos_Scale)
+summary(model1)
+anova(model1)
+```
+# Estimate of the variance explained by the random effect (ID)# 
+      = 59.47(7.712)
+      resid= 23.89 (low)
+# Estimate of the fixed effects of time#
+      intercept = 0.948 
+      time2 = 0.000
+      time3 = -1.250
+      time4 = -0.083
+      time5 = -2.750
+      time6 = -2.333
+      time7 = 0.763
+
+    Time shows insignificant effect on score, and most variance is accounted for in random effects. No fixed effects are significant according to 95% CI. 
+
+
+```{r}
+ci <- confint(model1, method="boot", nsim=10)
+ci <- tibble::rownames_to_column(data.frame(ci), "Term") 
+colnames(ci)<- c("Term", "CI 2.5%", "CI 97.5%")
+knitr::kable(ci[3:9,])
+
+```
+
+```{r}
+ggplot(data=PANAS_Pos_Scale, 
+       aes(y=score, x=time, color=ID, group=ID)) + 
+  geom_point() + geom_line() +
+  scale_color_manual(values = c("dodgerblue4","dodgerblue2","steelblue3", "steelblue1","lightsteelblue3","lightsteelblue1","lightskyblue4","lightskyblue3","lightskyblue1","paleturquoise3","paleturquoise1","royalblue1"))+
+  ggtitle("Positive PANAS Scores across Sessions") + 
+  theme(legend.position = "none") + 
+  scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))+
+  geom_abline(intercept = fixef(model1)[1], #Regression Line (RL).
+              slope=fixef(model1)[2], col="red") +                
+  geom_abline(intercept = ci$`CI 97.5%`[5], 
+              slope=ci$`CI 97.5%`[6], col="black") + #Upper Bound of RL
+  geom_abline(intercept = ci$`CI 2.5%`[5], 
+              slope=ci$`CI 2.5%`[6], col="black") + #Lower Bound of RL
+  geom_text(aes(4, 0.5, label="X"), col="red", size=10)
+```
+
+
+```{r}
