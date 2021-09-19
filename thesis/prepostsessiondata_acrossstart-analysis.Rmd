@@ -6,12 +6,16 @@ output: html_document
 Load necessary packages
 ```{r}
 library(tidyr)
+library(tidyverse)
 library(tidyREDCap)
 library(tibble)
 library(dplyr)
 library(data.table)
 library(lme4)
 library(nlme)
+library(sjlabelled)
+library(sjPlot)
+library(sjmisc)
 library(qwraps2)
 library(rstatix)
 library(ggpubr)
@@ -39,7 +43,11 @@ The first analysis will be a linear mixed model of PANAS and IOS scores across t
     a. gather data frame by time
     b. run anova with unchanged df
     c. run anova with outliers removed
-4.
+4. Run Linear Mixed Models
+    a. plot data 
+    b. fit a mixed model
+    c. calculate confidence intervals
+    d. plot data with model estimate
 
 
 1. Create new data frame, start only 
@@ -180,4 +188,24 @@ print(startonly_ANOVA)
 write.csv(startonly_ANOVA,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\data\\StartOnly_ANOVA.csv", row.names = FALSE)
 
 ```
+4. Run a mixed model analysis
 
+```{r}
+#Plot data: PANAS_POS
+lineplot <- ggplot(data=StartOnly, aes(y=panas_pos, x=session, color=id, group=id)) + 
+  geom_point() + geom_line() +
+  ggtitle("Positive PANAS Scores across Sessions, by individual ") + 
+  theme(legend.position = "none") + scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))
+lineplot
+```
+```{r}
+#Fit mixed model for PANAS_POS, PANAS_NEG, IOS
+lmm_panaspos<- lmer(panas_pos ~ session + (1|id), data=StartOnly)
+lmm_panasneg <- lmer(panas_neg ~ session + (1|id), data=StartOnly)
+lmm_ios <- lmer(ios ~ session + (1|id), data = StartOnly)
+
+#Create table for model summaries
+summary_lmm <- tab_model(lmm_panaspos, lmm_panasneg, lmm_ios, show.df = TRUE)
+view(summary_lmm)
+
+```
