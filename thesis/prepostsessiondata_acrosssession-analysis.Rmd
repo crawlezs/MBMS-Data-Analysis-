@@ -173,7 +173,7 @@ write.csv(anova_ios_startend,"C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\
 4. Run a mixed model analysis
 
 ```{r}
-#Fit mixed model for PANAS_POS, PANAS_NEG, IOS
+#Fit mixed model 1
 ## Terms: Session, Random: id
 lmm_panaspos<- lmer(panas_pos ~ session + (1|id), data=PrePostData)
 
@@ -187,11 +187,11 @@ tab_model(lmm_panaspos, lmm_panasneg, lmm_ios, show.df = TRUE)
 ```
 
 ```{r}
-#Fit mixed model for PANAS_POS, PANAS_NEG, IOS
-## Terms: Session, Random: id
-lmm_panaspos<- lmer(panas_pos ~ session + time+ (1|id), data=PrePostData)
+#Fit mixed model 2
+## Terms: Session, Time Random: id
+lmm_panaspos<- lmer(panas_pos ~ session + time + (1|id), data=PrePostData)
 
-lmm_panasneg <- lmer(panas_neg ~ session + time+ (1|id), data=PrePostData)
+lmm_panasneg <- lmer(panas_neg ~ session + time + (1|id), data=PrePostData)
 
 lmm_ios <-  lmer(ios ~ session + time+ (1|id), data=PrePostData)
 
@@ -200,7 +200,7 @@ tab_model(lmm_panaspos, lmm_panasneg, lmm_ios, show.df = TRUE)
 ```
 
 ```{r}
-##PANAS_POS PLOT##
+##PANAS_POS PLOT - Total##
 
 #create CI lines to plot
 ci_panaspos <- confint(lmm_panaspos, method="boot", nsim=10)
@@ -208,14 +208,14 @@ ci_panaspos <- tibble::rownames_to_column(data.frame(ci_panaspos), "Term")
 colnames(ci_panaspos)<- c("Term", "CI 2.5%", "CI 97.5%")
 as.tibble(ci_panaspos)
 
-#Plot models
-panaspos_ggplot<- ggplot(data=StartOnly, 
-       aes(y=panas_pos, x=session, color=id, group=id)) + 
+#Plot model 
+panaspos_ggplot<- ggplot(data= PrePostData, 
+       aes(y=panas_pos, x=time, color=id, group=id)) + 
   geom_point() + geom_line() +
   scale_color_manual(values = c("lightblue1","dodgerblue2","lightsteelblue2", "steelblue1","slategray2","lightsteelblue1","lightblue2","lightskyblue2","lightskyblue1","paleturquoise3","paleturquoise1","royalblue1"))+
-  ggtitle("Positive PANAS Scores across Sessions") + 
+  ggtitle("Positive PANAS Scores from Session Start to Session End") + 
   theme(legend.position = "none") + 
-  scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))+
+  scale_x_discrete(breaks = c(0, 1))+
   geom_abline(intercept = fixef(lmm_panaspos)[1], #Regression Line (RL).
               slope=fixef(lmm_panaspos)[2], col="red") +                
   geom_abline(intercept = ci_panaspos$`CI 97.5%`[3], 
@@ -226,11 +226,10 @@ panaspos_ggplot<- ggplot(data=StartOnly,
 panaspos_ggplot
 
 #save plot
-ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\acrossstart_modelplot_panaspos.png", plot = panaspos_ggplot ,scale = 1)
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\acrosssession_modelplot_panaspos.png", plot = panaspos_ggplot ,scale = 1)
 ```
-
 ```{r}
-##PANAS_NEG PLOT##
+##PANAS_NEG PLOT - Total##
 
 #create CI lines to plot
 ci_panasneg <- confint(lmm_panasneg, method="boot", nsim=10)
@@ -238,14 +237,14 @@ ci_panasneg <- tibble::rownames_to_column(data.frame(ci_panasneg), "Term")
 colnames(ci_panasneg)<- c("Term", "CI 2.5%", "CI 97.5%")
 as.tibble(ci_panasneg)
 
-#Plot models
-panasneg_ggplot<- ggplot(data=StartOnly, 
-       aes(y=panas_neg, x=session, color=id, group=id)) + 
+#Plot model 
+panasneg_ggplot<- ggplot(data= PrePostData, 
+       aes(y=panas_neg, x=time, color=id, group=id)) + 
   geom_point() + geom_line() +
   scale_color_manual(values = c("lightblue1","dodgerblue2","lightsteelblue2", "steelblue1","slategray2","lightsteelblue1","lightblue2","lightskyblue2","lightskyblue1","paleturquoise3","paleturquoise1","royalblue1"))+
-  ggtitle("Negative PANAS Scores across Sessions") + 
+  ggtitle("Negative PANAS Scores from Session Start to Session End") + 
   theme(legend.position = "none") + 
-  scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))+
+  scale_x_discrete(breaks = c(0, 1))+
   geom_abline(intercept = fixef(lmm_panasneg)[1], #Regression Line (RL).
               slope=fixef(lmm_panasneg)[2], col="red") +                
   geom_abline(intercept = ci_panasneg$`CI 97.5%`[3], 
@@ -256,10 +255,10 @@ panasneg_ggplot<- ggplot(data=StartOnly,
 panasneg_ggplot
 
 #save plot
-ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\acrossstart_modelplot_panasneg.png", plot = panasneg_ggplot ,scale = 1)
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\acrosssession_modelplot_panasneg.png", plot = panasneg_ggplot ,scale = 1)
 ```
 ```{r}
-##IOS PLOT##
+##IOS PLOT - Total##
 
 #create CI lines to plot
 ci_ios <- confint(lmm_ios, method="boot", nsim=10)
@@ -267,13 +266,14 @@ ci_ios <- tibble::rownames_to_column(data.frame(ci_ios), "Term")
 colnames(ci_ios)<- c("Term", "CI 2.5%", "CI 97.5%")
 as.tibble(ci_ios)
 
-#Plot models
-ios_ggplot<- ggplot(data=StartOnly, aes(y=ios, x=session, color=id, group=id)) + 
+#Plot model 
+ios_ggplot<- ggplot(data= PrePostData, 
+       aes(y=ios, x=time, color=id, group=id)) + 
   geom_point() + geom_line() +
   scale_color_manual(values = c("lightblue1","dodgerblue2","lightsteelblue2", "steelblue1","slategray2","lightsteelblue1","lightblue2","lightskyblue2","lightskyblue1","paleturquoise3","paleturquoise1","royalblue1"))+
-  ggtitle("IOS Scores across Sessions") + 
+  ggtitle("IOS Scores from Session Start to Session End") + 
   theme(legend.position = "none") + 
-  scale_x_discrete(breaks = c(1, 2, 3, 4, 5, 6, 7))+
+  scale_x_discrete(breaks = c(0, 1))+
   geom_abline(intercept = fixef(lmm_ios)[1], #Regression Line (RL).
               slope=fixef(lmm_ios)[2], col="red") +                
   geom_abline(intercept = ci_ios$`CI 97.5%`[3], 
@@ -284,12 +284,20 @@ ios_ggplot<- ggplot(data=StartOnly, aes(y=ios, x=session, color=id, group=id)) +
 ios_ggplot
 
 #save plot
-ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\acrossstart_modelplot_ios.png", plot = ios_ggplot ,scale = 1)
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\acrosssession_modelplot_ios.png", plot = ios_ggplot ,scale = 1)
+```
+```{r}
+lattice::xyplot(panas_pos ~ time | session, groups = id, data = PrePostData, type=c('p','r'), auto.key=F)
+
 ```
 
 
 ```{r}
 
+
+
 ```
+
+
 
 
