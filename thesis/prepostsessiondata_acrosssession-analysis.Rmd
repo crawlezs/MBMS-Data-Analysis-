@@ -1,0 +1,27 @@
+---
+title: "prepostsessiondata_acrosssession-analysis"
+output: html_document
+---
+
+The second analysis will be a linear mixed model of PANAS and IOS scores across the individual sessions, from Start (0) to End (1). 
+
+**Steps of analysis:**
+1. Load data frame of Start data
+2. Create variable of change across session
+2. Run descriptive statistics of change in panas_pos, panas_neg, and ios
+    a. Score means by Session
+    b. Score means by ID
+    c. Boxplot of Scores over Session, by ID
+    d. QQ plot of Scores over Session, by ID
+    e. Check for outliers 
+    f. Check for normality 
+3. Run repeated measures ANOVA to establish significant difference between scores across individual sessions
+    a. gather data frame by time
+    b. run anova with unchanged df
+    c. run anova with outliers removed
+4. Run Linear Mixed Models
+    a. plot data 
+    b. fit a mixed model
+    c. calculate confidence intervals
+    d. plot data with model estimate
+    
