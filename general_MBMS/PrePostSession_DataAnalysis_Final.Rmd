@@ -124,9 +124,9 @@ PANAS_Positive_Start%>%
   ggqqplot("score", facet.by = "time")
 ```
 PANAS_POS REPEATED MEASURES ANOVA
-```{r}
 anova.PANAS_Pos<- anova_test(data=PANAS_Positive_Start, dv=score, wid = ID, within = time)
-get_anova_table(anova.PANAS_Pos)
+get_anova_table(anova.PANAS_Pos)```{r}
+
 ```
 ##F(6,60)=1.57, p=0.172
 
