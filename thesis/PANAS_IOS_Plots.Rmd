@@ -53,7 +53,7 @@ panas_pos <- melt(panas_pos, id.vars=c("id", "dummy"))
 
 #plot
 panas_pos_plot <- ggplot(data = panas_pos, aes(x = variable, y = value))
-panas_pos_plot + geom_line(aes( group=id), size=0.1, color="blue") + geom_line(aes(group=dummy), size=2, stat="summary", color="blue") + scale_x_discrete(name ="Timepoint") + ylab("PANAS Positive Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+panas_pos_plot + geom_line(aes( group=id), size=0.1, color="darkslategray3") + geom_line(aes(group=dummy), size=2, stat="summary", color="royalblue3") + scale_x_discrete(name ="Timepoint") + ylab("PANAS Positive Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
 
 ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\panas_pos_plot_TL.png", plot = panas_pos_plot,scale = 1)
 ```
@@ -66,7 +66,7 @@ panas_neg <- plyr::rename(panas_neg, c("panas_start_neg"="START", "panas_end_neg
 panas_neg <- melt(panas_neg, id.vars=c("id", "dummy"))
 
 panas_neg_plot <- ggplot(data = panas_neg, aes(x = variable, y = value))
-panas_neg_plot + geom_line(aes( group=id), size=0.1, color="navy") + geom_line(aes(group=dummy), size=2, stat="summary", color="navy") + scale_x_discrete(name ="Timepoint") + ylab("PANAS Negative Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+panas_neg_plot + geom_line(aes( group=id), size=0.1, color="seagreen3") + geom_line(aes(group=dummy), size=2, stat="summary", color="seagreen") + scale_x_discrete(name ="Timepoint") + ylab("PANAS Negative Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
 
 
 ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\panas_neg_plot_TL.png", plot = panas_neg_plot,scale = 1)
@@ -80,9 +80,42 @@ ios <- plyr::rename(ios, c("ios_start"="START", "ios_end"="END"))
 ios <- melt(ios, id.vars=c("id", "dummy"))
 
 ios_plot <- ggplot(data = ios, aes(x = variable, y = value))
-ios_plot + geom_line(aes( group=id), size=0.1, color="darkslategray3") + geom_line(aes(group=dummy), size=2, stat="summary", color="darkslategray3") + scale_x_discrete(name ="Timepoint") + ylab("IOS Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+ios_plot + geom_line(aes( group=id), size=0.1, color="mediumpurple") + geom_line(aes(group=dummy), size=2, stat="summary", color="mediumpurple4") + scale_x_discrete(name ="Timepoint") + ylab("IOS Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
 
 
 ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\ios_plot_TL.png", plot =ios_plot,scale = 1)
 ```
+PANAS ACROSS EACH WEEK
+```{r}
+pos_across_sessions <- ggplot(data = df, aes(x = session, y = panas_start_pos))
+
+pos_across_sessions <- pos_across_sessions + geom_line(aes( group=id), size=0.1, color="darkslategray3") + geom_line(aes(group=dummy), size=2, stat="summary", color="royalblue4") + scale_x_continuous(breaks=seq(1, 7, 1), name="Session Number")+ ylab("PANAS Positive Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+
+pos_across_sessions
+
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\panaspos_across_plot_TL.png", plot = pos_across_sessions,scale = 1)
+```
+
+```{r}
+neg_across_sessions <- ggplot(data = df, aes(x = session, y = panas_start_neg))
+
+neg_across_sessions <- neg_across_sessions + geom_line(aes( group=id), size=0.1, color="seagreen3") + geom_line(aes(group=dummy), size=2, stat="summary", color="seagreen") + scale_x_continuous(breaks=seq(1, 7, 1), name="Session Number")+ ylab("PANAS Negative Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+
+neg_across_sessions
+
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\panasneg_across_plot_TL.png", plot = neg_across_sessions,scale = 1)
+
+```
+
+```{r}
+ios_across_sessions <- ggplot(data = df, aes(x = session, y = ios_start))
+
+ios_across_sessions <- ios_across_sessions + geom_line(aes( group=id), size=0.1, color="mediumpurple") + geom_line(aes(group=dummy), size=2, stat="summary", color="mediumpurple4") + scale_x_continuous(breaks=seq(1, 7, 1), name="Session Number")+ ylab("IOS Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+
+ios_across_sessions
+
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\ios_across_plot_TL.png", plot = ios_across_sessions, scale = 1)
+```
+
+
 
