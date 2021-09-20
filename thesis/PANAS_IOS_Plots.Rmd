@@ -1,0 +1,88 @@
+---
+title: "PANAS_IOS_plots"
+output: html_notebook
+---
+
+Plots based on MBMS_PANAS_plots by Talia Liu
+
+
+Load necessary packages
+```{r}
+library(ggplot2)
+library(plyr)
+library(readr)
+library(reshape2)
+```
+
+Load dataset
+```{r}
+df <- PrePostSession_PANASIOS_20210918 
+
+colnames(df) <- c("id", "session", "panas_start_pos", "panas_start_neg", "panas_end_pos", "panas_end_neg", "ios_start", "ios_end")
+
+df <- subset(df, id!= "12002", id!= "12009")
+
+df$session[df$session == "Session 1 (Arm 1: Arm 1)"] <- "1"
+df$session[df$session == "Session 2 (Arm 1: Arm 1)"] <- "2"
+df$session[df$session == "Session 3 (Arm 1: Arm 1)"] <- "3"
+df$session[df$session == "Session 4 (Arm 1: Arm 1)"] <- "4"
+df$session[df$session == "Session 5 (Arm 1: Arm 1)"] <- "5"
+df$session[df$session == "Session 6 (Arm 1: Arm 1)"] <- "6"
+df$session[df$session == "Session 7 (Arm 1: Arm 1)"] <- "7"
+
+df$session <- as.integer(df$session)
+
+print(df)
+```
+
+ 
+```{r}
+df$dummy <- 1
+early <-  df[ which(df$session==0), ]
+mid <-  df[ which(df$session==1), ]
+late <-  df[ which(df$session==2), ]
+```
+ 
+PANAS POSITIVE AFFECT
+```{r}
+panas_pos <- df[c('id', 'dummy', 'panas_start_pos', 'panas_end_pos')]
+panas_pos <- plyr::rename(panas_pos, c("panas_start_pos"="START", "panas_end_pos"="END"))
+
+# convert data to long form
+panas_pos <- melt(panas_pos, id.vars=c("id", "dummy"))
+
+#plot
+panas_pos_plot <- ggplot(data = panas_pos, aes(x = variable, y = value))
+panas_pos_plot + geom_line(aes( group=id), size=0.1, color="blue") + geom_line(aes(group=dummy), size=2, stat="summary", color="blue") + scale_x_discrete(name ="Timepoint") + ylab("PANAS Positive Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\panas_pos_plot_TL.png", plot = panas_pos_plot,scale = 1)
+```
+PANAS NEGATIVE AFFECT
+```{r}
+panas_neg <- df[c('id', 'dummy', 'panas_start_neg', 'panas_end_neg')]
+panas_neg <- plyr::rename(panas_neg, c("panas_start_neg"="START", "panas_end_neg"="END"))
+
+# convert data to long form
+panas_neg <- melt(panas_neg, id.vars=c("id", "dummy"))
+
+panas_neg_plot <- ggplot(data = panas_neg, aes(x = variable, y = value))
+panas_neg_plot + geom_line(aes( group=id), size=0.1, color="navy") + geom_line(aes(group=dummy), size=2, stat="summary", color="navy") + scale_x_discrete(name ="Timepoint") + ylab("PANAS Negative Affect Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+
+
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\panas_neg_plot_TL.png", plot = panas_neg_plot,scale = 1)
+```
+IOS
+```{r}
+ios <- df[c('id', 'dummy', 'ios_start', 'ios_end')]
+ios <- plyr::rename(ios, c("ios_start"="START", "ios_end"="END"))
+
+# convert data to long form
+ios <- melt(ios, id.vars=c("id", "dummy"))
+
+ios_plot <- ggplot(data = ios, aes(x = variable, y = value))
+ios_plot + geom_line(aes( group=id), size=0.1, color="darkslategray3") + geom_line(aes(group=dummy), size=2, stat="summary", color="darkslategray3") + scale_x_discrete(name ="Timepoint") + ylab("IOS Score")  +theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), text = element_text(size=20, face="bold"))
+
+
+ggsave(filename = "C:\\Users\\19149\\Documents\\R\\win-library\\4.1\\MBMS-Data-Analysis-\\MBMS-Data-Analysis-\\thesis\\visualization\\ios_plot_TL.png", plot =ios_plot,scale = 1)
+```
+
