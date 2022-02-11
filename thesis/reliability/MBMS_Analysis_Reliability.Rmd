@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 RMarkdown: MBMS_Analysis_Reliability
 Author: Zoe Crawley
 Date: 02/10/2022
@@ -13,10 +18,9 @@ library(ltm)
 *PSS*
 ```{r}
 #load dataset
-pss_baseline <- read_csv("thesis/reliability/mbms_pssreliability_baseline.csv")
-pss_post <- read_csv("thesis/reliability/mbms_pssreliability_post.csv")
-pss_followup <- read_csv("thesis/reliability/mbms_pssreliability_followup.csv")
-> 
+#pss_baseline <- read_csv("thesis/reliability/mbms_pssreliability_baseline.csv")
+#pss_post <- read_csv("thesis/reliability/mbms_pssreliability_post.csv")
+#pss_followup <- read_csv("thesis/reliability/mbms_pssreliability_followup.csv")
 ```
 
 
@@ -30,7 +34,7 @@ pss_post <- t(pss_post)
 cronbach.alpha(pss_post)
 
 #calculate follow-up
-pss_followup <- t(mbms_pssreliability_followup)
+pss_followup <- t(pss_followup)
 cronbach.alpha(pss_followup)
 
 ```
@@ -38,9 +42,9 @@ cronbach.alpha(pss_followup)
 *RYFF*
 ```{r}
 #load dataset#
-ryff_baseline <- read_csv("thesis/reliability/mbms_ryffreliability_baseline.csv")
-ryff_post <- read_csv("thesis/reliability/mbms_ryffreliability_post.csv")
-ryff_followup <- read_csv("thesis/reliability/mbms_ryffreliability_followup.csv")
+#ryff_baseline <- read_csv("thesis/reliability/mbms_ryffreliability_baseline.csv")
+#ryff_post <- read_csv("thesis/reliability/mbms_ryffreliability_post.csv")
+#ryff_followup <- read_csv("thesis/reliability/mbms_ryffreliability_followup.csv")
 ```
 
 ```{r}
@@ -60,9 +64,9 @@ cronbach.alpha(ryff_followup)
 *BDI*
 ```{r}
 #load dataset 
-bdi_baseline <- read_csv("thesis/reliability/mbms_bdireliability_baseline.csv")
-bdi_post <- read_csv("thesis/reliability/mbms_bdireliability_post.csv")
-bdi_followup <- read_csv("thesis/reliability/mbms_bdireliability_followup.csv")
+#bdi_baseline <- read_csv("thesis/reliability/mbms_bdireliability_baseline.csv")
+#bdi_post <- read_csv("thesis/reliability/mbms_bdireliability_post.csv")
+#bdi_followup <- read_csv("thesis/reliability/mbms_bdireliability_followup.csv")
 ```
 
 ```{r}
@@ -83,9 +87,9 @@ cronbach.alpha(bdi_followup)
 *BAI*
 ```{r}
 #load dataset#
-bai_baseline <- read_csv("thesis/reliability/mbms_baireliability_baseline.csv")
-bai_post <- read_csv("thesis/reliability/mbms_baireliability_post.csv")
-bai_followup <- read_csv("thesis/reliability/mbms_baireliability_followup.csv")
+#bai_baseline <- read_csv("thesis/reliability/mbms_baireliability_baseline.csv")
+#bai_post <- read_csv("thesis/reliability/mbms_baireliability_post.csv")
+#bai_followup <- read_csv("thesis/reliability/mbms_baireliability_followup.csv")
 ```
 
 ```{r}
