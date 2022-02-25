@@ -5,7 +5,7 @@ output:
 ---
 RMarkdown: MBMS_Analysis_Reliability
 Author: Zoe Crawley
-Date: 02/10/2022
+Date Created: 02/10/2022
 Data: MBMS Phase 1 Data, ZC Honor's Thesis
 
 In this document I will calculate reliability for the following measures: PSS, RYFF, BDI-II, BAI, and PANAS.
