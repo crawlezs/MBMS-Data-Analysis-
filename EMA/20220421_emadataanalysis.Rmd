@@ -84,8 +84,7 @@ surveys_mean_allids <- mean(ema_completion$completed)
 surveys_sd_allids <- sd(ema_completion$completed)
 
 surveys_mean_allids 
-surveys_
-sd_allids
+surveys_sd_allids
 ```
 
 ```{r}
@@ -105,5 +104,46 @@ ema_completion %>%
 ema_completion %>%
   group_by(id)%>%
   summarise_at(vars(completed), list(mean=mean, sd=sd))
+```
+***PANAS Score Descriptive***
+```{r}
+#mean score for all IDs
+panaspos_mean_allids <- mean(ema_df$panaspos_score, na.rm=TRUE)
+panaspos_sd_allids <- sd(ema_df$panaspos_score, na.rm=TRUE)
+
+panasneg_mean_allids <- mean(ema_df$panasneg_score, na.rm=TRUE)
+panasneg_sd_allids <- sd(ema_df$panasneg_score, na.rm=TRUE)
+
+panaspos_mean_allids
+panaspos_sd_allids
+panasneg_mean_allids
+panasneg_sd_allids
+```
+
+```{r}
+#panas score mean by event
+ema_df %>%
+  group_by(event)%>%
+  summarise_at(vars(panaspos_score, panasneg_score), 
+               list(mean=mean, sd=sd), na.rm=TRUE)
+```
+
+```{r}
+#panas score mean by group
+ema_df %>%
+  group_by(group)%>%
+  summarise_at(vars(panaspos_score, panasneg_score), 
+               list(mean=mean, sd=sd), na.rm=TRUE)
+```
+
+```{r}
+#panasscore mean by ID
+ema_df %>%
+  group_by(id)%>%
+  summarise_at(vars(panaspos_score, panasneg_score), 
+               list(mean=mean, sd=sd), na.rm=TRUE)
+```
+```{r}
+
 ```
 
