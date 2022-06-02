@@ -18,7 +18,7 @@ library(readr)
 
 Load Dataset
 ```{r}
-BaselinePostFollowup <- read_csv("MBMSMAINDatabase-BaselinePostFollowup_DATA_LABELS_2021-07-22_1124.csv")
+BaselinePostFollowup <- MBMSBaselinePostFollowup_DATA_MBMSMAINDatabase_BaselinePostFollowup_DATA_LABELS_2021_07_07_1143_1_
 ```
 Remove any missing data from the data set. 
 ```{r}
@@ -229,4 +229,8 @@ anova.bai_filter <-anova_test(data=bai_filter, dv=bai, wid = ID, within = time)
 get_anova_table(anova.bai_filter)
 ```
 
+Plot: Ryff, PSS, BDI, BAI
+```{r}
+ryff_plot <- ggplot
+```
 

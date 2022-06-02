@@ -13,6 +13,8 @@ In this document I will calculate reliability for the following measures: PSS, R
 ```{r}
 library(readr)
 library(ltm)
+library(psych)
+library(MBESS)
 ```
 
 *PSS*
@@ -26,15 +28,12 @@ library(ltm)
 
 ```{r}
 #calculate baseline
-pss_baseline <- t(pss_baseline)
 cronbach.alpha(pss_baseline)
 
 #calculate post
-pss_post <- t(pss_post)
 cronbach.alpha(pss_post)
 
 #calculate follow-up
-pss_followup <- t(pss_followup)
 cronbach.alpha(pss_followup)
 
 ```
@@ -49,17 +48,13 @@ cronbach.alpha(pss_followup)
 
 ```{r}
 #calculate baseline
-ryff_baseline <- t(ryff_baseline)
 cronbach.alpha(ryff_baseline)
 
 #calculate post
-ryff_post <- t(ryff_post)
 cronbach.alpha(ryff_post)
 
 #calculate follow-up
-ryff_followup <- t(ryff_followup)
 cronbach.alpha(ryff_followup)
-
 ```
 *BDI*
 ```{r}
@@ -71,15 +66,12 @@ cronbach.alpha(ryff_followup)
 
 ```{r}
 #calculate baseline
-bdi_baseline <- t(bdi_baseline)
 cronbach.alpha(bdi_baseline)
 
 #calculate post
-bdi_post <- t(bdi_post)
 cronbach.alpha(bdi_post)
 
 #calculate follow-up
-bdi_followup <- t(bdi_followup)
 cronbach.alpha(bdi_followup)
 
 ```
@@ -94,15 +86,33 @@ cronbach.alpha(bdi_followup)
 
 ```{r}
 #calculate baseline
-bai_baseline <- t(bai_baseline)
 cronbach.alpha(bai_baseline)
 
 #calculate post
-bai_post <- t(bai_post)
 cronbach.alpha(bai_post)
 
 #calculate follow-up
-bai_followup <- t(bai_followup)
 cronbach.alpha(bai_followup)
 
 ```
+*#PANAS#*
+CODE ADAPTED FROM 
+multilevel.reliability 
+
+PANAS Start
+```{r}
+describe(panas_start)
+```
+
+```{r}
+omega(panas_start[,2:22])
+```
+
+```{r}
+describe(panas_end)
+```
+
+```{r}
+omega(panas_end[, 2:22])
+```
+

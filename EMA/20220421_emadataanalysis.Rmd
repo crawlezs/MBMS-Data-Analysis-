@@ -1,0 +1,109 @@
+---
+title: "20220421_ema_dataanalysis"
+output: pdf_document
+---
+```{r}
+library(tidyverse)
+library(dplyr)
+library(lubridate)
+library(EMAtools)
+```
+
+import data set
+```{r}
+ema_df <- as_tibble(ema_data)
+ema_df
+```
+***Frequency Distributions***
+Frequency distributions of timestamp by all IDs, by individual, and by event
+
+```{r}
+ema_df %>%
+  mutate(hour = hour(time_participant)) %>%
+  ggplot(aes(x=hour)) + geom_bar() + 
+  ggtitle("Timestampe Freq Dist - All IDs")
+```
+```{r}
+ema_df %>%
+  mutate(hour = hour(time_participant)) %>%
+  ggplot(aes(x=hour)) + geom_bar() + 
+  ggtitle("Timestampe Freq Dist - by ID") +
+  facet_wrap(~id)
+```
+graph by event
+```{r}
+ema_df %>%
+  mutate(hour = hour(time_participant)) %>%
+  ggplot(aes(x=hour)) + geom_bar() + 
+  ggtitle("Timestampe Freq Dist - by event") +
+  facet_wrap(~event, ncol=1)
+```
+***Survey Completion***
+Calculation of number of surveys completed by participants.
+
+```{r}
+ema_df$completed <- as.integer(if_else(
+  !is.na(ema_df$panaspos_score), 1, 0))
+
+ema_df$instance <- as.integer(ema_df$instance)
+
+head(ema_df)
+
+```
+create data frame for completion sums
+```{r}
+ema_completion <- data.frame(matrix(ncol=4, nrow=28))
+colnames(ema_completion) <- c("id", "event", "group", "completed")
+```
+
+populate ema_completion data frame and sum completed
+```{r}
+nrows = 28*3
+ystart = 1
+yend = 15
+
+for(x in 1:nrows){
+  count <- sum(ema_df[ystart:yend, 'completed'])
+  
+  ema_completion[x,1] <- ema_df[yend,1]
+  ema_completion[x,2] <- ema_df[yend,2]
+  ema_completion[x,3] <- ema_df[yend,4]
+  ema_completion[x,4] <- count
+  
+  ystart = ystart + 15
+  yend = yend + 15
+  x = x + 1
+}
+  
+head(ema_completion)
+
+```
+```{r}
+#mean completed for all IDs
+surveys_mean_allids <- mean(ema_completion$completed)
+surveys_sd_allids <- sd(ema_completion$completed)
+
+surveys_mean_allids 
+surveys_
+sd_allids
+```
+
+```{r}
+#mean completed by event
+ema_completion %>%
+  group_by(event)%>%
+  summarise_at(vars(completed), list(mean=mean, sd=sd))
+```
+```{r}
+#mean completed by group
+ema_completion %>%
+  group_by(group)%>%
+  summarise_at(vars(completed), list(mean=mean, sd=sd))
+```
+```{r}
+#mean completed by ID
+ema_completion %>%
+  group_by(id)%>%
+  summarise_at(vars(completed), list(mean=mean, sd=sd))
+```
+

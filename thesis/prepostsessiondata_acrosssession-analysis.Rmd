@@ -189,11 +189,11 @@ tab_model(lmm_panaspos, lmm_panasneg, lmm_ios, show.df = TRUE)
 ```{r}
 #Fit mixed model 2
 ## Terms: Session, Time Random: id
-lmm_panaspos<- lmer(panas_pos ~ session + time + (1|id), data=PrePostData)
+lmm_panaspos<- lmer(panas_pos ~ time + (1|id), data=PrePostData)
 
-lmm_panasneg <- lmer(panas_neg ~ session + time + (1|id), data=PrePostData)
+lmm_panasneg <- lmer(panas_neg ~ time + (1|id), data=PrePostData)
 
-lmm_ios <-  lmer(ios ~ session + time+ (1|id), data=PrePostData)
+lmm_ios <-  lmer(ios ~ time+ (1|id), data=PrePostData)
 
 #Create table for model summaries
 tab_model(lmm_panaspos, lmm_panasneg, lmm_ios, show.df = TRUE)
