@@ -14,6 +14,21 @@ import data set
 ema_df <- as_tibble(ema_data)
 ema_df
 ```
+create day of week variable
+```{r}
+ema_df$dayofweek <- weekdays(ema_df$date)
+
+ema_df$cat_dayofweek <- ema_df$dayofweek
+ema_df$cat_dayofweek <- recode(ema_df$cat_dayofweek, 
+                               "Monday" = "Weekday", "Tuesday" = "Weekday",
+                               "Wednesday" = "Weekday", "Thursday" = "Weekday",
+                               "Friday" = "Weekday", "Saturday" = "Weekend", 
+                               "Sunday" = "Weekend")
+
+head(ema_df)
+```
+
+
 ***Frequency Distributions***
 Frequency distributions of timestamp by all IDs, by individual, and by event
 
