@@ -28,7 +28,6 @@ ema_df$cat_dayofweek <- recode(ema_df$cat_dayofweek,
 head(ema_df)
 ```
 
-
 ***Frequency Distributions***
 Frequency distributions of timestamp by all IDs, by individual, and by event
 
@@ -67,8 +66,8 @@ head(ema_df)
 ```
 create data frame for completion sums
 ```{r}
-ema_completion <- data.frame(matrix(ncol=4, nrow=28))
-colnames(ema_completion) <- c("id", "event", "group", "completed")
+ema_completion <- data.frame(matrix(ncol=5, nrow=28))
+colnames(ema_completion) <- c("id", "event", "group", "day", "completed")
 ```
 
 populate ema_completion data frame and sum completed
@@ -83,7 +82,8 @@ for(x in 1:nrows){
   ema_completion[x,1] <- ema_df[yend,1]
   ema_completion[x,2] <- ema_df[yend,2]
   ema_completion[x,3] <- ema_df[yend,4]
-  ema_completion[x,4] <- count
+  ema_completion[x,4] <- ema_df[yend, 'cat_dayofweek']
+  ema_completion[x,5] <- count
   
   ystart = ystart + 15
   yend = yend + 15
@@ -120,6 +120,13 @@ ema_completion %>%
   group_by(id)%>%
   summarise_at(vars(completed), list(mean=mean, sd=sd))
 ```
+```{r}
+#mean completed by day of week
+ema_completion %>%
+  group_by(day)%>%
+  summarise_at(vars(completed), list(mean=mean, sd=sd))
+```
+
 ***PANAS Score Descriptive***
 ```{r}
 #mean score for all IDs
@@ -159,6 +166,10 @@ ema_df %>%
                list(mean=mean, sd=sd), na.rm=TRUE)
 ```
 ```{r}
-
+#panas score mean by day
+ema_df %>%
+  group_by(cat_dayofweek)%>%
+  summarise_at(vars(panaspos_score, panasneg_score), 
+               list(mean=mean, sd=sd), na.rm=TRUE)
 ```
 
