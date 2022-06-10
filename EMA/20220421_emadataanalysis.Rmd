@@ -2,6 +2,8 @@
 title: "20220421_ema_dataanalysis"
 output: pdf_document
 ---
+last updated: 6/10/2022 by ZC
+
 ```{r}
 library(tidyverse)
 library(dplyr)
@@ -171,5 +173,65 @@ ema_df %>%
   group_by(cat_dayofweek)%>%
   summarise_at(vars(panaspos_score, panasneg_score), 
                list(mean=mean, sd=sd), na.rm=TRUE)
+```
+
+*****EMA MODEL*****
+```{r}
+library(modelr)
+```
+
+create variable - within-day successive difference
+```{r}
+model_df <- ema_df
+model_df$date_time <- as.POSIXct(paste(model_df$date, model_df$time), 
+format= "%Y-%m-%d %H:%M:%S")
+
+model_df <- model_df[, colnames(model_df)[c(1:7, 35, 32, 33, 8:31, 34)]]
+```
+
+nrows = 28*3
+ystart = 1
+yend = 15
+
+for(x in 1:nrows){
+  count <- sum(ema_df[ystart:yend, 'completed'])
+  
+  ema_completion[x,1] <- ema_df[yend,1]
+  ema_completion[x,2] <- ema_df[yend,2]
+  ema_completion[x,3] <- ema_df[yend,4]
+  ema_completion[x,4] <- ema_df[yend, 'cat_dayofweek']
+  ema_completion[x,5] <- count
+  
+  ystart = ystart + 15
+  yend = yend + 15
+  x = x + 1
+}
+  
+head(ema_completion)
+```{r}
+wd_sd <- c()
+wd_sd <- c(wd_sd, 0)
+
+x=2
+
+for(x in 1:(nrows)){
+  diff = ifelse(model_df$id[x] != model_df$id[x-1], 0,
+              ifelse(model_df$date[x] != model_df$date[x-1], 0,
+                (difftime(model_df$time[x], model_df$time[x-1], units = "mins"))))
+  
+  diff <- as.numeric(diff)
+
+  wd_sd <- c(wd_sd, diff)
+  x = x + 1
+}
+```
+
+```{r}
+length(wd_sd)
+
+model_df$wd_sd <- wd_sd
+model_df$wd_sd[wd_sd == 0] <- NA
+
+model_df <- model_df[, colnames(model_df)[c(1:12, 36, 13:35)]]
 ```
 
